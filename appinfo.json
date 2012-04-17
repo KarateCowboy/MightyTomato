@@ -1,0 +1,10 @@
+{
+	"id": "com.mystuff.mightytomato",
+	"version": "1.0.0",
+	"vendor": "My Company",
+	"type": "web",
+	"main": "index.html",
+	"title": "Mighty Tomato",
+	"icon": "icon.png",
+	"uiRevision":2
+}
