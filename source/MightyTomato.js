@@ -10,7 +10,7 @@ enyo.kind({
 				//Insert your components here
 			]}
 		]},
-		{ kind: enyo.Toolbar, components: [
+		{kind: enyo.Toolbar, components: [
 		]}
 	]
 });
