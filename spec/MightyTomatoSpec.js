@@ -1,11 +1,11 @@
 describe("MightyTomato", function() {
-    var timer;
+    var tomato;
     beforeEach(function(){
-        timer = new MightyTomato();
+      tomato = new MightyTomato();
     });
 
     it("exists", function() {
-        expect(timer).toNotBe(null);
+        expect(tomato).toNotBe(null);
 
     });
 

@@ -2,15 +2,15 @@ enyo.kind({
 	name: "MightyTomato",
 	kind: enyo.VFlexBox,
 	components: [
-		{kind: "PageHeader", components: [
+		{kind: enyo.PageHeader, components: [
 			{content: "Page Header"}
 		]},
-		{flex: 1, kind: "Pane", components: [
+		{flex: 1, kind: enyo.Pane, components: [
 			{flex: 1, kind: "Scroller", components: [
 				//Insert your components here
 			]}
 		]},
-		{kind: "Toolbar", components: [
+		{ kind: enyo.Toolbar, components: [
 		]}
 	]
 });
