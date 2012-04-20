@@ -10,8 +10,16 @@ describe("MightyTomato", function () {
 
     describe("Tomato Splash Button", function () {
         it("exists", function () {
-          expect(tomato.getComponents().length).toBeGreaterThan(0);
+            expect(tomato.getComponents().length).toBeGreaterThan(0);
         });
+    });
 
+    it("displays a tomato button", function () {
+        var names = tomato.getComponents();
+        var found = false;
+        var com;
+        for ( com in names) {
+        }
+        //expect(found).toBeTruthy();
     });
 });
