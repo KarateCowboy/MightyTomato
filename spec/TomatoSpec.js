@@ -1,5 +1,5 @@
 describe("Tomato", function() {
-  var pomodoro;
+  var tomato;
   beforeEach(function(){
     tomato = new Tomato();
   });
@@ -22,6 +22,4 @@ describe("Tomato", function() {
     });
 
   });
-
-
 });
