@@ -12,6 +12,14 @@ describe("Tomato", function() {
     expect(tomato.getLength()).toBe(25);
   });
 
+  it("has a minute counter", function() {
+    expect(tomato.getMinute()).toBe(25);
+  });
+
+  it("has a second counter", function() {
+   expect(tomato.getSecond()).toBe(0);
+  });
+
   describe("startTime", function() {
     it("exists", function() {
       expect(tomato.getStartTime()).toNotBe(null);
