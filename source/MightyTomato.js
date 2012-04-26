@@ -8,12 +8,6 @@ enyo.kind({
         ]},
         {flex:1, kind:enyo.Pane, name:"Pane", components:[
             {flex:1, kind:"Scroller", name:"Scroller", components:[
-
-                {kind:enyo.ToggleButton, name:"mainButton", label:"Start a Tomato", onclick:"mainButtonPress", components:[
-                    {kind:enyo.Image, name:"tomatoPic", src:"images/tomato.png", className:"centered"},
-                    {kind:enyo.BasicRichText, name:"counterText", showing:false}
-
-                ]}
                 //Insert your components here
             ]}
         ]},
