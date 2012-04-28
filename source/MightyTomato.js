@@ -8,6 +8,7 @@ enyo.kind({
         ]},
         {flex:1, kind:enyo.Pane, name:"Pane", components:[
             {flex:1, kind:"Scroller", name:"Scroller", components:[
+                {kind: "MainButton",name:"MainButton"}
                 //Insert your components here
             ]}
         ]},

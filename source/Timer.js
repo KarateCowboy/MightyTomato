@@ -7,7 +7,9 @@
  */
 
 enyo.kind({
-    name: "Timer",
-    kind: enyo.Component,
-    content: "25:00"
+    name:"Timer",
+    kind:enyo.Component,
+    content:"25:00",
+    minute:25,
+    second:0
 });
