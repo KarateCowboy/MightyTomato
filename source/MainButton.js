@@ -7,12 +7,9 @@
  */
 
 enyo.kind({
-    name: "MainButton",
-    kind: enyo.CustomButton,
-    components: [
-        {kind: enyo.Image, src:"images/tomato.png", name: "tomatoIcon"},
+    name:"MainButton",
+    kind:enyo.CustomButton,
+    components:[
+        {kind:enyo.Image, src:"images/tomato.png", name:"tomatoIcon", className:"centered"}
     ]
-
-
-
 });

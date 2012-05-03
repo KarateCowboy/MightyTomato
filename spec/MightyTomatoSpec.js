@@ -27,7 +27,37 @@ describe("MightyTomato", function () {
         expect(showing).toBeTruthy();
     });
 
-    describe("Tomato Splash Button", function () {
+    describe("when the main button is pressed", function () {
+        var mainButton;
+        var timerButton;
+        beforeEach(function () {
+            var children = tomato.getComponents();
+            for (var i in children) {
+                if (children[i].kind == "MainButton") {
+                    mainButton = children[i];
+                }
+                if (children[i].kind == "TimerButton") {
+                    timerButton = children[i];
+                }
+            }
+        });
+
+        it("is set up to call a function", function () {
+            expect(mainButton.onclick == "mainButtonPress").toBeTruthy();
+
+        });
+
+        describe("mainButtonPress", function () {
+            it("hides the mainButton", function () {
+                tomato.mainButtonPress();
+                expect(mainButton.getShowing()).toBeFalsy();
+            });
+            it("shows the timer button", function () {
+                tomato.mainButtonPress();
+                expect(timerButton.getShowing()).toBeTruthy();
+            });
+
+        });
 
 
     });

@@ -27,8 +27,17 @@ describe("Timer", function () {
     it("has a second value of 0", function () {
         expect(timer.second).toBe(0);
     });
+    describe("startTime", function () {
+        it("exists", function () {
+            expect(timer.getStartTime()).toNotBe(null);
+            console.log("Time is " + timer.getStartTime());
+        });
 
+        it("is in the format MM/DD/YYYY 00:00:00", function () {
+            expect(timer.getStartTime().match(/[\d]{2,2}\/[\d]{2,2}\/[\d]{4,4}[\s]+[\d]{1,2}:[\d]{1,2}:[\d]{1,2}/)).toBeTruthy();
+        });
 
+    });
 
 
 });

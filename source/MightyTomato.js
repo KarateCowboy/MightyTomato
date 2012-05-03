@@ -8,8 +8,10 @@ enyo.kind({
         ]},
         {flex:1, kind:enyo.Pane, name:"Pane", components:[
             {flex:1, kind:"Scroller", name:"Scroller", components:[
-                {kind: "MainButton",name:"MainButton"}
                 //Insert your components here
+                {kind:"MainButton", name:"MainButton", onclick:"mainButtonPress"},
+                {kind:"TimerButton", name:"TimerButton"}
+
             ]}
         ]},
 
@@ -23,11 +25,6 @@ enyo.kind({
     },
 
     mainButtonPress:function () {
-        if (this.tomato == null) {
-            this.tomato = new Tomato();
-        }
-        this.$.tomatoPic.hide();
-        this.$.counterText.value = this.tomato.getMinute() + ':' + this.tomato.getSecond();
-        this.$.counterText.show();
+        this.$.MainButton.hide();
     }
 });
