@@ -11,14 +11,14 @@ enyo.kind({
     content:"25:00",
     minute:25,
     second:0,
-    startTime:null,
+    published:{
+        startTime:"this.startTime"
+    },
     constructor:function () {
         var now = new Date();
-        this.startTime = new String(this.pad(now.getMonth(), 2) + "/" + this.pad(now.getDate(), 2) + "/" + now.getFullYear() + " " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
+        this.setStartTime(new String(this.pad(now.getMonth(), 2) + "/" + this.pad(now.getDate(), 2) + "/" + now.getFullYear() + " " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds()));
     },
-    published:{
-        startTime:this.startTime
-    },
+
 
     pad:function (number, length) {
 
@@ -28,5 +28,4 @@ enyo.kind({
         }
         return str;
     }
-})
-;
+});

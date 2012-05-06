@@ -1,7 +1,6 @@
 enyo.kind({
     name:"MightyTomato",
     kind:enyo.VFlexBox,
-    tomato:null,
     components:[
         {kind:enyo.PageHeader, name:"PageHeader", components:[
             {content:"Mighty Tomato"}
@@ -10,7 +9,7 @@ enyo.kind({
             {flex:1, kind:"Scroller", name:"Scroller", components:[
                 //Insert your components here
                 {kind:"MainButton", name:"MainButton", onclick:"mainButtonPress"},
-                {kind:"TimerButton", name:"TimerButton"}
+                {kind:"TimerButton", name:"TimerButton",showing: false, className:'timer-button'}
 
             ]}
         ]},
@@ -21,10 +20,11 @@ enyo.kind({
     ],
 
     published:{
-        tomato:this.tomato
+
     },
 
     mainButtonPress:function () {
         this.$.MainButton.hide();
+        this.$.TimerButton.show();
     }
 });

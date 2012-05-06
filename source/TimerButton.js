@@ -8,6 +8,15 @@
 
 enyo.kind({
     name:"TimerButton",
-    kind:enyo.CustomButton
+    kind:enyo.CustomButton,
+    caption:'',
+    constructor:function () {
+        this.caption = this.displayValue;
+    },
+    components:[
 
+    ],
+    published:{
+        displayValue:"25:00"
+    }
 });

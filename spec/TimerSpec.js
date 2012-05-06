@@ -39,5 +39,11 @@ describe("Timer", function () {
 
     });
 
+    describe("pad", function () {
+        it("returns 22 when given 22", function () {
+            expect(timer.pad('22', 2)).toBe('22');
+        });
+    });
+
 
 });

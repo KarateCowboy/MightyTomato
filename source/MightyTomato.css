@@ -7,6 +7,14 @@ IMG.centered{
 
 }
 
+.timer-button{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    background-color:red;
+}
+
 #body{
-  background-color: 'red';
+  background-color: red;
 }

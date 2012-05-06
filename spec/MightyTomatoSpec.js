@@ -27,6 +27,29 @@ describe("MightyTomato", function () {
         expect(showing).toBeTruthy();
     });
 
+    describe("timerButton instance properties", function () {
+        var timerButton;
+
+        beforeEach(function () {
+            var children = tomato.getComponents();
+            for (var i in children) {
+                if (children[i].kind == "TimerButton") {
+                    timerButton = children[i];
+                }
+            }
+        });
+
+        it("hides the timerButton upon creation", function () {
+            expect(timerButton.getShowing()).toBeFalsy();
+        });
+
+        it("has CSS class 'centered'", function () {
+            expect(timerButton.className.match(/timer-button/)).toBeTruthy();
+        });
+
+    });
+
+
     describe("when the main button is pressed", function () {
         var mainButton;
         var timerButton;
@@ -56,10 +79,11 @@ describe("MightyTomato", function () {
                 tomato.mainButtonPress();
                 expect(timerButton.getShowing()).toBeTruthy();
             });
+            it("invokes the timer start", function () {
+
+
+            });
 
         });
-
-
     });
-
 });
