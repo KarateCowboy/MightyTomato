@@ -8,7 +8,7 @@
 
 enyo.kind({
     name:"MainButton",
-    kind:enyo.CustomButton,
+    kind: onyx.Button,
     components:[
         {kind:enyo.Image, src:"images/tomato.png", name:"tomatoIcon", className:"centered"}
     ]
