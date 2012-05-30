@@ -1,8 +1,9 @@
 enyo.kind({
     name:"MightyTomato",
     kind:enyo.VFlexBox,
-    seconds: 0,
-    minutes: 25,
+    seconds: 2,
+    minutes: 0,
+    timerInterval: null,
     components:[
         {kind:enyo.PageHeader, name:"PageHeader", components:[
             {content:"Mighty Tomato"}
@@ -28,7 +29,7 @@ enyo.kind({
     mainButtonPress:function () {
         this.$.MainButton.hide();
         this.$.TimerButton.show();
-        window.setInterval("t.decrementTimer()",1000);
+        this.timerInterval =  window.setInterval("t.decrementTimer()",1000);
     },
 
     timerButtonPress: function(){
@@ -43,9 +44,14 @@ enyo.kind({
          this.seconds = this.seconds - 1;
        }
        if(this.minutes < 0){
-         window.clearInterval();
+         window.clearInterval(this.timerInterval);
          this.minutes = 0;
          this.seconds = 0;
+         var mySound = new buzz.sound( "sounds/Victory_Fanfare", {
+           formats: [ "ogg", "mp3", "acc" ]
+         });
+
+         mySound.play();
        }
        var mins = this.pad(this.minutes,2);
        var secs = this.pad(this.seconds,2);
