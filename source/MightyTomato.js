@@ -4,15 +4,19 @@ enyo.kind({
     seconds:0,
     minutes:25,
     timerInterval:null,
+    classes:"onyx",
     components:[
-        {kind:enyo.PageHeader, name:"PageHeader", components:[
+        {kind:onyx.Toolbar, name:"PageHeader", components:[
             {content:"Mighty Tomato"}
         ]},
         {flex:1, kind:enyo.Pane, name:"Pane", classname: "mainPane", components:[
             {flex:1, kind:"Scroller", name:"Scroller", components:[
                 //Insert your components here
-                {kind:"MainButton", name:"MainButton", ontap:"mainButtonPress"},
-                {kind:onyx.Button, name:"TimerButton", showing:false, className:'timer-button', content:"25:00", ontap:"timerButtonPress"}
+                {kind:"MainButton", name:"MainButton", classes:'main-button',ontap:"mainButtonPress"},
+                {kind: onyx.Input, name:"TaskText", classes: 'task-text'},
+                {kind:onyx.Button, name:"TimerButton", showing:false, classes:'timer-button', content:"25:00", ontap:"timerButtonPress"},
+                {kind: onyx.ProgressBar, name: "PBar"}
+ 
 
             ]}
         ]},
@@ -28,6 +32,7 @@ enyo.kind({
 
     mainButtonPress:function () {
         this.$.MainButton.hide();
+        this.$.TaskText.hide();
         this.$.TimerButton.show();
         this.timerInterval = window.setInterval("t.decrementTimer()", 1000);
     },
