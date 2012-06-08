@@ -6,17 +6,15 @@ enyo.kind({
     timerInterval:null,
     classes:"onyx",
     components:[
-        {kind:onyx.Toolbar, name:"PageHeader", components:[
-            {content:"Mighty Tomato"}
+        {kind:onyx.Toolbar, style:"background-color: #F3E2A9", name:"PageHeader", components:[
+            {content:"Mighty Tomato", name: "Marquee"}
         ]},
         {flex:1, kind:enyo.Pane, name:"Pane", classname: "mainPane", components:[
             {flex:1, kind:"Scroller", name:"Scroller", components:[
                 //Insert your components here
                 {kind:"MainButton", name:"MainButton", classes:'main-button',ontap:"mainButtonPress"},
-                {kind: onyx.Input, name:"TaskText", classes: 'task-text'},
-                {kind:onyx.Button, name:"TimerButton", showing:false, classes:'timer-button', content:"25:00", ontap:"timerButtonPress"},
-                {kind: onyx.ProgressBar, name: "PBar"}
- 
+                {kind: onyx.Input, name:"TaskText", classes: 'task-text onyx-input-decorator'},
+                {kind:onyx.Button, name:"TimerButton", showing:false, classes:'timer-button', content:"25:00", ontap:"timerButtonPress"}
 
             ]}
         ]},
@@ -26,29 +24,26 @@ enyo.kind({
         ]}
     ],
 
-    published:{
-
-    },
-
     mainButtonPress:function () {
         this.$.MainButton.hide();
         this.$.TaskText.hide();
         this.$.TimerButton.show();
         this.timerInterval = window.setInterval("t.decrementTimer()", 1000);
+        this.$.Marquee.setContent(this.$.TaskText.getValue());
     },
 
     timerButtonPress:function () {
         if (this.timerInterval == null) {
             this.$.TimerButton.hide();
             this.$.TimerButton.setContent("25:00");
-           this.$.MainButton.show();
+            this.$.TaskText.setValue('');
+            this.$.MainButton.show();
+            this.$.TaskText.show();
             this.minutes = 25;
             this.seconds = 0;
         } else {
             this.timerInterval = window.clearInterval(this.timerInterval);
         }
-
-
     },
 
     decrementTimer:function () {
