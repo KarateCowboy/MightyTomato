@@ -10,6 +10,6 @@ enyo.kind({
     name:"MainButton",
     kind: onyx.Button,
     components:[
-        {kind:enyo.Image, src:"images/tomato.png", name:"tomatoIcon", className:"centered"}
+        {kind:enyo.Image, src:"images/tomato.png", name:"tomatoIcon", classes:"centered"}
     ]
 });

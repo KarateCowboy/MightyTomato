@@ -6,22 +6,25 @@ enyo.kind({
     timerInterval:null,
     classes:"onyx",
     components:[
-        {kind:onyx.Toolbar, style:"background-color: #F3E2A9", name:"PageHeader", components:[
-            {content:"Mighty Tomato", name: "Marquee"}
+        {kind:onyx.Toolbar, name:"PageHeader", style: "background-color: #0511F8",  components:[
+            {content:"Mighty Tomato", name: "Marquee"},
+            {kind: onyx.Button, name:"PreferencesButton", classes: "enyo-button-dark", content:"Preferences", ontap: "showPreferencesModal"}//add config buttons here
         ]},
         {flex:1, kind:enyo.Pane, name:"Pane", classname: "mainPane", components:[
             {flex:1, kind:"Scroller", name:"Scroller", components:[
-                //Insert your components here
                 {kind:"MainButton", name:"MainButton", classes:'main-button',ontap:"mainButtonPress"},
                 {kind: onyx.Input, name:"TaskText", classes: 'task-text onyx-input-decorator'},
-                {kind:onyx.Button, name:"TimerButton", showing:false, classes:'timer-button', content:"25:00", ontap:"timerButtonPress"}
+                {kind:onyx.Button, name:"TimerButton", showing:false, classes:'timer-button', content:"25:00", ontap:"timerButtonPress"},
+                {kind: onyx.ModalDialog, name:"PreferencesModal", caption: "Configure Your Preferences"}
 
             ]}
         ]},
+        {kind: enyo.SlidingPane,
+         name: "ConfigSlider"}
 
-        {kind:enyo.Toolbar, name:"Toolbar", components:[
+        //{kind:onyx.Toolbar, name:"Toolbar", components:[
 
-        ]}
+        //]}
     ],
 
     mainButtonPress:function () {
@@ -29,7 +32,12 @@ enyo.kind({
         this.$.TaskText.hide();
         this.$.TimerButton.show();
         this.timerInterval = window.setInterval("t.decrementTimer()", 1000);
-        this.$.Marquee.setContent(this.$.TaskText.getValue());
+        var taskName = this.$.TaskText.getValue();
+        if(taskName.length > 0){
+          this.$.Marquee.setContent(taskName);
+        }else{
+          this.$.Marquee.setContent("Mighty Tomato");
+        }
     },
 
     timerButtonPress:function () {
@@ -41,6 +49,7 @@ enyo.kind({
             this.$.TaskText.show();
             this.minutes = 25;
             this.seconds = 0;
+            this.$.Marquee.setValue("Mighty Tomato");
         } else {
             this.timerInterval = window.clearInterval(this.timerInterval);
         }
@@ -66,6 +75,11 @@ enyo.kind({
         var mins = this.pad(this.minutes, 2);
         var secs = this.pad(this.seconds, 2);
         this.$.TimerButton.setContent(mins + ":" + secs);
+    },
+   
+    showPreferencesModal: function () {
+      this.$.PreferencesModal.show(); 
+
     },
 
     pad:function (number, length) {
