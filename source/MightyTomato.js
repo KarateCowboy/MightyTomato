@@ -71,7 +71,11 @@ enyo.kind({
             });
 
             mySound.play();
+        }else{
+            var ticking = new buzz.sound("sounds/tick1", { formats:[ "ogg"]});
+            ticking.play();
         }
+
         var mins = this.pad(this.minutes, 2);
         var secs = this.pad(this.seconds, 2);
         this.$.TimerButton.setContent(mins + ":" + secs);
