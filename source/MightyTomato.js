@@ -1,8 +1,9 @@
+
 enyo.kind({
     name:"MightyTomato",
     kind:enyo.VFlexBox,
-    seconds:0,
-    minutes:25,
+    seconds:3,
+    minutes:0,
     timerInterval:null,
     classes:"onyx",
     components:[
@@ -15,16 +16,22 @@ enyo.kind({
                 {kind:"MainButton", name:"MainButton", classes:'main-button',ontap:"mainButtonPress"},
                 {kind: onyx.Input, name:"TaskText", classes: 'task-text onyx-input-decorator'},
                 {kind:onyx.Button, name:"TimerButton", showing:false, classes:'timer-button', content:"25:00", ontap:"timerButtonPress"},
-                {kind: onyx.ModalDialog, name:"PreferencesModal", caption: "Configure Your Preferences"}
-
+                {kind: onyx.Popup, modal: true, floating: true, centered: true, name:"PreferencesModal",  components:[
+                    { content: "Preferences" },
+                    { layoutKind: enyo.HFlexLayout, pack: "center", components: [
+                        {content: "Alarm Sound"},
+                        {kind: onyx.RadioGroup, name: "AlarmSetting", components: [
+                            {name: "longSongRadio", content: "Victory Fanfare", active: true},
+                            {name: "shortDing", content: "Short Ding"},
+                            {content: "None"}
+                        ]}
+                    ]}
+                ]}
             ]}
         ]},
         {kind: enyo.SlidingPane,
          name: "ConfigSlider"}
 
-        //{kind:onyx.Toolbar, name:"Toolbar", components:[
-
-        //]}
     ],
 
     mainButtonPress:function () {
@@ -66,11 +73,17 @@ enyo.kind({
             window.clearInterval(this.timerInterval);
             this.minutes = 0;
             this.seconds = 0;
-            var mySound = new buzz.sound("sounds/Victory_Fanfare", {
-                formats:[ "ogg", "mp3", "acc" ]
-            });
-
-            mySound.play();
+            if(this.$.longSongRadio.getActive()){
+                var mySound = new buzz.sound("sounds/Victory_Fanfare", {
+                    formats:[ "ogg"]
+                });
+                mySound.play();
+            }else if(this.$.shortDing.getActive()){
+                var mySound = new buzz.sound("sounds/Short_Ding", {
+                    formats:[ "ogg"]
+                });
+                mySound.play();
+            }
         }else{
             var ticking = new buzz.sound("sounds/tick1", { formats:[ "ogg"]});
             ticking.play();
@@ -82,8 +95,7 @@ enyo.kind({
     },
    
     showPreferencesModal: function () {
-      this.$.PreferencesModal.show(); 
-
+      this.$.PreferencesModal.show();
     },
 
     pad:function (number, length) {
