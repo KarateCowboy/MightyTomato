@@ -10,25 +10,30 @@
     <script type="text/javascript" src="lib/jasmine-1.2.0.rc3/jasmine-html.js"></script>
 
     <!-- include source files here... -->
-    <script src="/opt/PalmSDK/Current/share/framework/enyo/1.0/framework/enyo.js" type="text/javascript"></script>
+
+    <script src="enyo-2.0b4/enyo.js" type="text/javascript"></script>
+    <script type="text/javascript" src="enyo/enyo.js"></script>
+    <link rel="stylesheet" href="enyo-2.0b4/enyo.css">
+    <script type="text/javascript" src="package.js"></script>
     <script type="text/javascript" src="source/MightyTomato.js"></script>
     <script type="text/javascript" src="source/MainButton.js"></script>
     <script type="text/javascript" src="source/Timer.js"></script>
     <script type="text/javascript" src="source/TimerButton.js"></script>
+    <script type="text/javascript" src="source/TomatoTrail.js"></script>
 
 
     <!-- include spec files here... -->
-
-    <script type="text/javascript" src="spec/SpecHelper.js"></script>
-    <script type="text/javascript" src="spec/MightyTomatoSpec.js"></script>
+    <script type="text/javascript" src="spec/TomatoTrailSpec.js"></script>
     <!--
+
+    <script type="text/javascript" src="spec/MightyTomatoSpec.js"></script>
     <script type="text/javascript" src="spec/MainButtonSpec.js"></script>
     <script type="text/javascript" src="spec/TimerSpec.js"></script>
     <script type="text/javascript" src="spec/TimerButtonSpec.js"></script>    -->
 
 
     <script type="text/javascript">
-        (function () {
+        (function (){
             var jasmineEnv = jasmine.getEnv();
             jasmineEnv.updateInterval = 1000;
 
@@ -36,20 +41,20 @@
 
             jasmineEnv.addReporter(htmlReporter);
 
-            jasmineEnv.specFilter = function (spec) {
+            jasmineEnv.specFilter = function (spec){
                 return htmlReporter.specFilter(spec);
             };
 
             var currentWindowOnload = window.onload;
 
-            window.onload = function () {
-                if (currentWindowOnload) {
+            window.onload = function (){
+                if ( currentWindowOnload ){
                     currentWindowOnload();
                 }
                 execJasmine();
             };
 
-            function execJasmine() {
+            function execJasmine(){
                 jasmineEnv.execute();
             }
 

@@ -1,31 +1,24 @@
 /* Your CSS here */
 
-IMG.centered{
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-
+IMG.centered {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 
 }
 
-.main-button{
+.main-button {
     display: block;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
     border-radius: 20px;
+    height: 275px;
+    width: 275px;
 
 }
 
-.task-text{
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    
-}
-
-.break-button{
+.timer-button {
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -36,7 +29,16 @@ IMG.centered{
     border-radius: 20px;
 }
 
-.timer-button{
+.task-text {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 350px;
+
+}
+
+.break-button {
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -47,6 +49,6 @@ IMG.centered{
     border-radius: 20px;
 }
 
-.body{
-  background-color: red;
+.body {
+    background-color: red;
 }
