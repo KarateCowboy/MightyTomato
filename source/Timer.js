@@ -9,16 +9,22 @@ enyo.kind({
     name:"Timer",
     kind:enyo.Component,
     content:"25:00",
-    minute:25,
+    minute:0,
     second:0,
-    published:{
-        startTime:"this.startTime"
-    },
+
+    /*
     constructor:function () {
         var now = new Date();
         this.setStartTime(new String(this.pad(now.getMonth(), 2) + "/" + this.pad(now.getDate(), 2) + "/" + now.getFullYear() + " " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds()));
     },
+    */
 
+    start: function(){
+      window.setInterval();
+    },
+    currentTime: function(){
+      return this.pad(this.minute,2) + ":" + this.pad(this.second,2);
+    },
 
     pad:function (number, length) {
 

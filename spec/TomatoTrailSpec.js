@@ -23,7 +23,12 @@ describe("TomatoTrail", function (){
   });
 
   describe("#addTomato", function (){
-
+    it("exists",function(){
+       expect(trail.addTomato).toBeDefined();
+    });
+    it("takes a tomato status string", function(){
+      //pending();
+    });
   });
 
 });
