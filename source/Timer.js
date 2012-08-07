@@ -11,16 +11,30 @@ enyo.kind({
     content:"25:00",
     minute:0,
     second:0,
-
-    /*
-    constructor:function () {
-        var now = new Date();
-        this.setStartTime(new String(this.pad(now.getMonth(), 2) + "/" + this.pad(now.getDate(), 2) + "/" + now.getFullYear() + " " + now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds()));
-    },
-    */
+    interval:null,
 
     start: function(){
-      window.setInterval();
+      this.interval = window.setInterval("this.countDown",1000);
+    },
+    
+    countDown: function(){
+      if(this.second == 0){
+         this.second = 59; 
+      }else{
+         this.second--;    
+      }
+
+      if(this.second == 0){
+          this.minute--;
+      }
+
+      if(this.minute <= 0 && this.second == 0){
+         this.finishCounting();
+      }else{
+        this.bubbleUp('doCountDown');
+      }
+
+        
     },
     currentTime: function(){
       return this.pad(this.minute,2) + ":" + this.pad(this.second,2);
@@ -33,5 +47,10 @@ enyo.kind({
             str = '0' + str;
         }
         return str;
+    },
+    
+    finishCounting: function(){
+        window.clearInterval(this.interval);
+        this.bubbleUp('doFinish');
     }
 });

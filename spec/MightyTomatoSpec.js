@@ -40,7 +40,7 @@ describe("MightyTomato", function (){
     });
 
     it("hides the timerButton upon creation", function (){
-      expect(timerButton.getShowing()).toBeFalsy();
+      expect(timerButton.showing.toBeFalsy();
     });
 
     it("has CSS class 'centered'", function (){

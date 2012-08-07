@@ -57,10 +57,57 @@ describe("Timer", function () {
       it("sets the countDown function for every second", function(){
         spyOn(window,'setInterval');
         timer.start();
-        expect(window.setInterval).toHaveBeenCalledWithValueAsNthParameter("this.countDown",0);
-        expect(window.setInterval).toHaveBeenCalledWithValueAsNthParameter(1000,1);
+        expect(window.setInterval).toHaveBeenCalledWith("this.countDown",1000);
       });
     });
-
+    
+    describe("#countDown", function(){
+       it("decrements seconds", function(){
+           timer.second = 10;
+           timer.countDown();
+           expect(timer.second).toBe(9);
+       });
+       it("decrements the minute when the second turns zero", function(){
+           timer.second = 1;
+           timer.minute = 2;
+           timer.countDown();
+           expect(timer.minute).toBe(1);
+       });
+       it("resetts the seconds to fifty-nine after hitting zero", function(){
+         timer.second = 0;
+         timer.minute = 4;
+         timer.countDown();
+         expect(timer.second).toBe(59);
+       
+       });
+       it("bubbles up an event every second", function(){
+         spyOn(timer,"bubbleUp");
+         timer.countDown();
+         expect(timer.bubbleUp).toHaveBeenCalledWith("doCountDown");     
+       });
+       
+       it("calls the finish function when counted down", function(){
+         spyOn(timer,'finishCounting');
+         timer.minute = 0;
+         timer.second = 1;
+         timer.countDown();
+         expect(timer.finishCounting).toHaveBeenCalled();
+       });
+    });
+    
+    describe("#finishCounting",function(){
+      it("clears the interval", function(){
+        spyOn(window,'clearInterval');
+        timer.minute = 0;
+        timer.second = 1;
+        timer.countDown();
+        expect(window.clearInterval).toHaveBeenCalledWith(timer.interval);
+      });
+      it("bubbles up an event", function(){
+        spyOn(timer,'bubbleUp');
+        timer.finishCounting();
+        expect(timer.bubbleUp).toHaveBeenCalledWith('doFinish');      
+      });
+    });
 
 });
