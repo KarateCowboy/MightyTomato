@@ -1,12 +1,8 @@
 enyo.kind({
   name:"MightyTomato",
   kind:enyo.VFlexBox,
-  seconds:25,
-  minutes:0,
-  timerInterval:null,
   classes:"onyx",
-  tick:null,
-  tock:null,
+  timer: new Timer(),
   session:'pomodoro',
   tickTock:0,
   components:[
@@ -16,7 +12,7 @@ enyo.kind({
     ]},
     {flex:1, kind:enyo.Pane, name:"Pane", classname:"mainPane", components:[
       {flex:1, kind:"Scroller", name:"Scroller", components:[
-        {kind:"MainButton", name:"MainButton", classes:'main-button', ontap:"setupTimer"},
+        {kind:"MainButton", name:"MainButton", classes:'main-button', ontap:"mainButtonPress"},
         {kind:onyx.Input, name:"TaskText", classes:'task-text onyx-input-decorator', placeholder:"Some important task..."},
         {kind:onyx.Button, name:"TimerButton", showing:false, classes:'timer-button', content:"25:00", ontap:"timerButtonPress"},
         {kind:onyx.Popup, modal:true, floating:true, centered:true, name:"PreferencesModal", components:[
@@ -41,6 +37,18 @@ enyo.kind({
       ]}
     ]}
   ],
+
+    mainButtonPress: function(){
+      //this.timer = new Timer();
+      this.timer.minute = 25;
+      this.timer.second = 0;
+      this.$.MainButton.hide();
+      this.timer.start();
+    },
+
+    handlers: {
+      onCountDown: "countDownHandler"
+    },
 
   setupTimer:function (button){
     if ( button === this.$.MainButton ){

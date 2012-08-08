@@ -10,80 +10,42 @@ describe("MightyTomato", function (){
     expect(tomato).toNotBe(null);
   });
 
-  it("shows the MainButton on startup", function (){
-    var exists = false;
-    var showing = false;
+  describe("MainButton", function(){
+     it("exists, and is of kind 'MainButton'", function(){
+        expect(tomato.$.MainButton).toBeDefined();
+        expect(tomato.$.MainButton.kind).toBe('MainButton');
+     });
 
-    var children = tomato.getComponents();
-    for ( var i in children ){
-      if ( children[i].kind == "MainButton" ){
-        exists = true;
-        if ( children[i].getShowing() == true ){
-          showing = true;
-        }
-      }
-    }
-    expect(exists).toBeTruthy();
-    expect(showing).toBeTruthy();
-  });
-
-  describe("timerButton instance properties", function (){
-    var timerButton;
-
-    beforeEach(function (){
-      var children = tomato.getComponents();
-      for ( var i in children ){
-        if ( children[i].kind == "TimerButton" ){
-          timerButton = children[i];
-        }
-      }
-    });
-
-    it("hides the timerButton upon creation", function (){
-      expect(timerButton.showing.toBeFalsy();
-    });
-
-    it("has CSS class 'centered'", function (){
-      expect(timerButton.className.match(/timer-button/)).toBeTruthy();
-    });
-
-  });
-
-
-  describe("when the main button is pressed", function (){
-    var mainButton;
-    var timerButton;
-    beforeEach(function (){
-      var children = tomato.getComponents();
-      for ( var i in children ){
-        if ( children[i].kind == "MainButton" ){
-          mainButton = children[i];
-        }
-        if ( children[i].kind == "TimerButton" ){
-          timerButton = children[i];
-        }
-      }
-    });
-
-    it("is set up to call a function", function (){
-      expect(mainButton.onclick == "mainButtonPress").toBeTruthy();
-
-    });
-
-    describe("mainButtonPress", function (){
-      it("hides the mainButton", function (){
-        tomato.mainButtonPress();
-        expect(mainButton.getShowing()).toBeFalsy();
-      });
-      it("shows the timer button", function (){
-        tomato.mainButtonPress();
-        expect(timerButton.getShowing()).toBeTruthy();
-      });
-      it("invokes the timer start", function (){
-
-
+      it("calls mainButtonPress when tapped",function(){
+        expect(tomato.$.MainButton.ontap).toBe('mainButtonPress');
       });
 
-    });
+      describe("#mainButtonPress",function(){
+        it("hides the MainButton",function(){
+           tomato.mainButtonPress();
+            expect(tomato.$.MainButton.showing).toBeFalsy();
+        });
+
+        it("sets the timer to 25:00",function(){
+            tomato.mainButtonPress();
+           expect(tomato.timer.minute).toBe(25);
+            expect(tomato.timer.second).toBe(0);
+        });
+        it("starts the timer", function(){
+            spyOn(tomato.timer,'start');
+            tomato.mainButtonPress();
+            expect(tomato.timer.start).toHaveBeenCalled();
+        });
+      });
   });
+
+    describe("#handlers",function(){
+      describe("onCountDown",function(){
+        alert(tomato.handlers);
+      });
+    });
+
+
+
+
 });
