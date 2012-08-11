@@ -2,7 +2,6 @@ enyo.kind({
   name:"MightyTomato",
   kind:enyo.VFlexBox,
   classes:"onyx",
-  timer: new Timer(),
   session:'pomodoro',
   tickTock:0,
   components:[
@@ -13,8 +12,10 @@ enyo.kind({
     {flex:1, kind:enyo.Pane, name:"Pane", classname:"mainPane", components:[
       {flex:1, kind:"Scroller", name:"Scroller", components:[
         {kind:"MainButton", name:"MainButton", classes:'main-button', ontap:"mainButtonPress"},
+        {kind: "Timer",name: "timer"},
         {kind:onyx.Input, name:"TaskText", classes:'task-text onyx-input-decorator', placeholder:"Some important task..."},
         {kind:onyx.Button, name:"TimerButton", showing:false, classes:'timer-button', content:"25:00", ontap:"timerButtonPress"},
+        {kind:onyx.Popup, modal: true, floating: true, centered: true, name: "CancelConfirmation" },
         {kind:onyx.Popup, modal:true, floating:true, centered:true, name:"PreferencesModal", components:[
           { content:"Preferences" },
           {tag:"br"},
@@ -40,15 +41,13 @@ enyo.kind({
 
     mainButtonPress: function(){
       //this.timer = new Timer();
-      this.timer.minute = 25;
-      this.timer.second = 0;
+      this.$.timer.minute = 25;
+      this.$.timer.second = 0;
       this.$.MainButton.hide();
-      this.timer.start();
+      this.$.TimerButton.show();
+      this.$.timer.start();
     },
 
-    handlers: {
-      onCountDown: "countDownHandler"
-    },
 
   setupTimer:function (button){
     if ( button === this.$.MainButton ){
@@ -76,6 +75,11 @@ enyo.kind({
     }
   },
 
+  timerButtonPress: function(){
+    this.$.CancelConfirmation.show();
+  },
+
+  /*
   timerButtonPress:function (){
     if ( this.timerInterval == null ){
       this.$.TimerButton.hide();
@@ -90,6 +94,7 @@ enyo.kind({
       this.timerInterval = window.clearInterval(this.timerInterval);
     }
   },
+  */
 
   decrementTimer:function (){
     if ( this.seconds == 0 ){
