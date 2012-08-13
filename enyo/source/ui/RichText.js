@@ -1,11 +1,13 @@
 /**
-	A multi-line text input that supports rich formatting such as bold, italics, and underlining.
+	A multi-line text input that supports rich formatting, such as bold, italics,
+	and underlining.
 
-	Use the value property to get or set the displayed text.
+	Use the _value_ property to get or set the displayed text.
 
 	RichText is not supported on Android < 3.
 
-	Selection operations, and [insertAtCursor](#enyo.RichText::insertAtCursor) use the HTML Editing APIs
+	Selection operations and [insertAtCursor](#enyo.RichText::insertAtCursor)
+	use the HTML Editing APIs.
 
 	[HTML Editing APIs # Selection Reference](https://dvcs.w3.org/hg/editing/raw-file/tip/editing.html#selections)
 */
@@ -22,38 +24,45 @@ enyo.kind({
 		disabled: false,
 		value: ""
 	},
-	events: {
-		//* cross platform input change event (IE does not support oninput)
-		onInputChange: ""
-	},
+	//* Set to true to focus this control when it is rendered.
+	defaultFocus: false,
 	//* @protected
+	statics: {
+		osInfo: [
+			{os: "android", version: 3},
+			{os: "ios", version: 5}
+		],
+		//* Returns true if the platform has contenteditable attribute.
+		hasContentEditable: function() {
+			for (var i=0, t, m; t=enyo.RichText.osInfo[i]; i++) {
+				if (enyo.platform[t.os] < t.version) {
+					return false;
+				}
+			}
+			return true;
+		}
+	},
+	kind: enyo.Input,
 	attributes: {
-		contenteditable: true,
-		onfocus: enyo.bubbler,
-		onblur: enyo.bubbler
+		contenteditable: true
 	},
 	handlers: {
-		oninput: "input"
+		onfocus: "focusHandler",
+		onblur: "blurHandler"
 	},
+	// create RichText as a div if platform has contenteditable attribute, otherwise create it as a textarea
 	create: function() {
-		if (enyo.platform.ie) {
-			this.handlers.onkeyup = "keyup";
-		}
+		this.setTag(enyo.RichText.hasContentEditable()?"div":"textarea");
 		this.inherited(arguments);
-		this.disabledChanged();
-		this.valueChanged();
 	},
-	keyup: function() {
-		this.notifyContainer();
+	// simulate onchange event that inputs expose
+	focusHandler: function() {
+		this._value = this.getValue();
 	},
-	input: function() {
-		this.notifyContainer();
-	},
-	notifyContainer: function() {
-		this.bubble("onInputChange");
-	},
-	disabledChanged: function() {
-		this.setAttribute("disabled", this.disabled);
+	blurHandler: function() {
+		if (this._value !== this.getValue()) {
+			this.bubble("onchange");
+		}
 	},
 	valueChanged: function() {
 		if (this.hasFocus()) {
@@ -69,22 +78,14 @@ enyo.kind({
 			return this.node.innerHTML;
 		}
 	},
-	focus: function() {
-		if (this.hasNode()) {
-			this.node.focus();
-		}
-	},
-	//* Returns true if the RichText is focused, using querySelector
+	//* Returns true if the RichText is focused.
 	hasFocus: function() {
 		if (this.hasNode()) {
-			return Boolean(this.node.parentNode.querySelector("#" + this.id + ":focus"));
+			return document.activeElement === this.node;
 		}
 	},
-	clear: function() {
-		this.setValue("");
-	},
 	/**
-		Return the selection object
+		Returns the selection object.
 	*/
 	getSelection: function() {
 		if (this.hasFocus()) {
@@ -103,7 +104,7 @@ enyo.kind({
 			s.modify(inType || "move", inDirection, inAmount);
 		}
 	},
-	//* Moves the cursor according to the Editing API
+	//* Moves the cursor according to the Editing API.
 	moveCursor: function(inDirection, inAmount) {
 		this.modifySelection("move", inDirection, inAmount);
 	},
@@ -118,7 +119,8 @@ enyo.kind({
 			document.execCommand("selectAll");
 		}
 	},
-	//* Insert HTML at the cursor position, HTML is escaped unless the _allowHTML_ property is true
+	//* Inserts HTML at the cursor position.  HTML is escaped unless the
+	//* _allowHTML_ property is true.
 	insertAtCursor: function(inValue) {
 		if (this.hasFocus()) {
 			var v = this.allowHtml ? inValue : enyo.Control.escapeHtml(inValue).replace(/\n/g, "<br/>");

@@ -1,4 +1,4 @@
-﻿//* @public
+//* @public
 
 /**
 	Allow bootstrapping in environments that do not have a window object right away.
@@ -33,11 +33,11 @@ enyo.dom = {
 	},
 	//* @protected
 	getComputedStyle: function(inNode) {
-		return window.getComputedStyle && window.getComputedStyle(inNode, null);
+		return window.getComputedStyle && inNode && window.getComputedStyle(inNode, null);
 	},
 	getComputedStyleValue: function(inNode, inProperty, inComputedStyle) {
 		var s = inComputedStyle || this.getComputedStyle(inNode);
-		return s.getPropertyValue(inProperty);
+		return s ? s.getPropertyValue(inProperty) : null;
 	},
 	getFirstElementByTagName: function(inTagName) {
 		var e = document.getElementsByTagName(inTagName);
@@ -53,5 +53,19 @@ enyo.dom = {
 			b.className += " enyo-body-fit";
 		}
 		enyo.bodyIsFitting = true;
+	},
+	getWindowWidth: function() {
+		if (window.innerWidth) {
+			return window.innerWidth;
+		}
+		if (document.body && document.body.offsetWidth) {
+			return document.body.offsetWidth;
+		}
+		if (document.compatMode=='CSS1Compat' &&
+			document.documentElement &&
+			document.documentElement.offsetWidth ) {
+			return document.documentElement.offsetWidth;
+		}
+		return 320;
 	}
 };

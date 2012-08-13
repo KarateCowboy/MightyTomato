@@ -7,12 +7,12 @@
 			{kind: "Flickr", showing: false, classes: "enyo-fit"}
 		]}
 	],
-	search: function(inSender, inSearch) {
-		this.$.flickrSearch.search(inSearch);
+	search: function(inSender, inEvent) {
+		this.$.flickrSearch.search(inEvent.query);
 	},
-	searchResults: function(inSender, inResults) {
-		this.results = inResults;
-		this.$.viewer.showResults(inResults);
+	searchResults: function(inSender, inEvent) {
+		this.results = inEvent;
+		this.$.viewer.showResults(inEvent);
 	},
 	select: function(inSender, inEvent) {
 		this.$.flickr.setShowing(true);

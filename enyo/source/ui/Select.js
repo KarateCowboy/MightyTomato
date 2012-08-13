@@ -1,5 +1,6 @@
 /**
-	enyo.Select implements an HTML selection widget, using [enyo.Option](#enyo.Option) kinds by default.
+	_enyo.Select_ implements an HTML selection widget, using
+	[enyo.Option](#enyo.Option) kinds by default.
 
 	Example:
 
@@ -9,13 +10,17 @@
 		]}
 
 		selectChanged: function(inSender, inEvent) {
-			var s = inSender.getSelected();
+			var s = inSender.getValue();
 			if (s == "d") {
 				this.sortListDescending();
 			} else {
 				this.sortListAscending();
 			}
 		}
+
+	Note: this uses the `<select>` tag which isn't implemented
+	for native webOS applications, although it does work in the
+	webOS web browser.
 */
 
 enyo.kind({
@@ -47,8 +52,17 @@ enyo.kind({
 	change: function() {
 		this.selected = this.getSelected();
 	},
+	render: function() {
+		// work around IE bug with innerHTML setting of <select>, rerender parent instead
+		// http://support.microsoft.com/default.aspx?scid=kb;en-us;276228
+		if (enyo.platform.ie) {
+			this.parent.render();
+		} else {
+			this.inherited(arguments);
+		}
+	},
 	//* @public
-	//* Returns the value of the selected option
+	//* Returns the value of the selected option.
 	getValue: function() {
 		if (this.hasNode()) {
 			return this.node.value;
@@ -57,7 +71,7 @@ enyo.kind({
 });
 
 /**
-	enyo.Option implements the options in an HTML select widget
+	enyo.Option implements the options in an HTML select widget.
 */
 enyo.kind({
 	name: "enyo.Option",
@@ -76,7 +90,8 @@ enyo.kind({
 });
 
 /**
-	enyo.OptionGroup allows for grouping options in a select widget, and for blocks of options to be disabled
+	enyo.OptionGroup allows for grouping options in a select widget, and for
+	blocks of options to be disabled.
 */
 enyo.kind({
 	name: "enyo.OptionGroup",

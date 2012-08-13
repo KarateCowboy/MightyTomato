@@ -1,7 +1,8 @@
-﻿(function() {
+(function() {
 	var ms = Math.round(1000/60);
 	var prefix = ["webkit", "moz", "ms", "o", ""];
-	var r = "requestAnimationFrame", c = "cancel" + enyo.cap(r);
+	var r = "requestAnimationFrame";
+	var c = "cancel" + enyo.cap(r);
 	// fallback on setTimeout and clearTimeout
 	var _requestFrame = function(inCallback) {
 		return window.setTimeout(inCallback, ms);
@@ -30,7 +31,7 @@
 		}
 	}
 	/**
-		Request an animation callback.
+		Requests an animation callback.
 
 		On compatible browsers, if _inNode_ is defined, the callback will fire only if _inNode_ is visible.
 
@@ -40,7 +41,7 @@
 		return _requestFrame(inCallback, inNode);
 	};
 	/**
-		Cancel a requested animation callback with the specified id.
+		Cancels a requested animation callback with the specified id.
 	*/
 	enyo.cancelRequestAnimationFrame = function(inId) {
 		return _cancelFrame(inId);
@@ -83,7 +84,11 @@ enyo.easing = {
 	the _inEasing_ function to the percentage of time elapsed / duration, capped
 	at 100%.
 */
-enyo.easedLerp = function(inT0, inDuration, inEasing) {
+enyo.easedLerp = function(inT0, inDuration, inEasing, reverse) {
 	var lerp = (enyo.now() - inT0) / inDuration;
-	return lerp >= 1 ? 1 : inEasing(lerp);
+	if (reverse) {
+		return lerp >= 1 ? 0 : (1 - inEasing(1 - lerp));
+	} else {
+		return lerp >= 1 ? 1 : inEasing(lerp);
+	}
 };

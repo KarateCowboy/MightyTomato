@@ -1,30 +1,36 @@
 /**
-	Implements an HTML checkbox input, with support for grouping
+	Implements an HTML checkbox input, with support for grouping.
 */
 enyo.kind({
 	name: "enyo.Checkbox",
-	//* @protected
 	kind: enyo.Input,
-	attributes: {
-		type: "checkbox"
-	},
+	classes: "enyo-checkbox",
 	events: {
 		onActivate: ""
 	},
-	//* @public
 	published: {
 		//* Value of the checkbox
 		checked: false,
 		//* Group API requirement for determining selected item
-		active: false
+		active: false,
+		//* @protected
+		type: "checkbox"
 	},
 	//* @protected
+	// disable classes inherited from enyo.Input
+	kindClasses: "",
 	handlers: {
 		onchange: "change",
 		onclick: "click"
 	},
 	create: function() {
 		this.inherited(arguments);
+	},
+	rendered: function() {
+		this.inherited(arguments);
+		if (this.active) {
+			this.activeChanged();
+		}
 		this.checkedChanged();
 	},
 	// instance 'checked' property is linked to DOM 'checked' property
@@ -45,7 +51,6 @@ enyo.kind({
 	},
 	// all input type controls support 'value' property
 	setValue: function(inValue) {
-		this.log();
 		this.setChecked(Boolean(inValue));
 	},
 	getValue: function() {
@@ -57,23 +62,15 @@ enyo.kind({
 		// we squelch the inherited method
 	},
 	change: function() {
-		// Various versions of IE (notably IE8) do not fire 'onchange' for 
-		// checkboxes, so we discern change via 'click'.
-		// The click handler bubbles the 'click' event up as if it were 'onchange'
-		// for platform-compatibility (e.g. listeners for 'onchange'
-		// will receive messages on IE8).
-		// Therefore, we squelch the proper 'change' event.
-		return true;
+		this.setActive(this.getChecked());
 	},
 	click: function(inSender, inEvent) {
 		// Various versions of IE (notably IE8) do not fire 'onchange' for 
 		// checkboxes, so we discern change via 'click'.
 		// Note: keyboard interaction (e.g. pressing space when focused) fires
 		// a click event.
-		this.setActive(this.getChecked());
-		// We propagate 'click' on checkbox as 'change' for IE
-		// compatibility, as discussed in the 'change' method
-		// comments.
-		this.bubbleUp("onchange", inEvent);
+		if (enyo.platform.ie <= 8) {
+			this.bubble("onchange", inEvent);
+		}
 	}
 });

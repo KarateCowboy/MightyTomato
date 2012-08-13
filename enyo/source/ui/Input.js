@@ -1,25 +1,39 @@
 /**
-	Implements an HTML input element with cross platform support for change events
+	Implements an HTML &lt;input&gt; element with cross-platform support for
+	change events.
+
+	You can listen for _oninput_ and _onchange_ DOM events from this control
+	to know when the text inside has been modified. _oninput_ fires immediately
+	while _onchange_ fires when the text has changed and the input loses focus.
 */
 enyo.kind({
 	name: "enyo.Input",
 	published: {
 		/**
-			Value of the input. Use this property only to initialize the value. Use _getValue()_ and _setValue()_ to
-			manipulate the value at runtime.
+			Value of the input.  Use this property only to initialize the value.
+			Use _getValue()_ and _setValue()_ to manipulate the value at runtime.
 		*/
 		value: "",
 		//* Text to display when the input is empty
 		placeholder: "",
+		/**
+			Type of input, if not specified, it's treated as "text".  It can
+			be anything specified for the _type_ attribute in the HTML
+			specification, including "url", "email", "search", or "number".
+		*/
 		type: "",
+		/**
+			When true, prevent input into the control. This maps to the 
+			_disabled_ DOM attribute.
+		*/
 		disabled: false
 	},
 	events: {
-		//* Sent when the input's value has changed, support for IE included.
-		onInputChange: "",
-		//* Sent when the input's is disabled or enabled.
+		//* Sent when the input is disabled or enabled.
 		onDisabledChange: ""
 	},
+	//* Set to true to focus this control when it is rendered.
+	defaultFocus: false,
 	//* @protected
 	tag: "input",
 	classes: "enyo-input",
@@ -29,17 +43,27 @@ enyo.kind({
 	},
 	handlers: {
 		oninput: "input",
-		onclear: "clear"
+		onclear: "clear",
+		ondragstart: "dragstart"
 	},
 	create: function() {
 		if (enyo.platform.ie) {
-			this.handlers.onkeyup = "keyup";
+			this.handlers.onkeyup = "iekeyup";
 		}
 		this.inherited(arguments);
-		this.disabledChanged();
 		this.placeholderChanged();
-		this.typeChanged();
+		// prevent overriding a custom attribute with null
+		if (this.type) {
+			this.typeChanged();
+		}
 		this.valueChanged();
+	},
+	rendered: function() {
+		this.inherited(arguments);
+		this.disabledChanged();
+		if (this.defaultFocus) {
+			this.focus();
+		}
 	},
 	typeChanged: function() {
 		this.setAttribute("type", this.type);
@@ -57,17 +81,13 @@ enyo.kind({
 	valueChanged: function() {
 		this.setAttribute("value", this.value);
 		this.setNodeProperty("value", this.value);
-		this.notifyContainer();
 	},
-	keyup: function() {
-		// ie only
-		this.notifyContainer();
-	},
-	input: function() {
-		this.notifyContainer();
-	},
-	notifyContainer: function() {
-		this.bubble("onInputChange");
+	iekeyup: function(inSender, inEvent) {
+		var ie = enyo.platform.ie, kc = inEvent.keyCode;
+		// input event missing on ie 8, fails to fire on backspace and delete keys in ie 9
+		if (ie <= 8 || (ie == 9 && (kc == 8 || kc == 46))) {
+			this.bubble("oninput", inEvent);
+		}
 	},
 	clear: function() {
 		this.setValue("");
@@ -76,5 +96,9 @@ enyo.kind({
 		if (this.hasNode()) {
 			this.node.focus();
 		}
+	},
+	// note: we disallow dragging of an input to allow text selection on all platforms
+	dragstart: function() {
+		return true;
 	}
 });

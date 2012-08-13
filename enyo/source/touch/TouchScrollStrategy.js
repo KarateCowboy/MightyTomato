@@ -1,40 +1,51 @@
-﻿/**
-enyo.TouchScrollStrategy is a helper kind that implments a touch based scroller that integrates the scrolling simulation provided
-by <a href="#enyo.ScrollMath">enyo.ScrollMath</a> into an <a href="#enyo.Scroller">enyo.Scroller</a>.
+/**
+_enyo.TouchScrollStrategy_, a helper kind for implementing a touch-based
+scroller, integrates the scrolling simulation provided by
+<a href="#enyo.ScrollMath">enyo.ScrollMath</a> into an
+<a href="#enyo.Scroller">enyo.Scroller</a>.
 
-enyo.TouchScrollStrategy is not typically created in application code.
+_enyo.TouchScrollStrategy_ is not typically created in application code.
 */
 enyo.kind({
 	name: "enyo.TouchScrollStrategy",
 	kind: "ScrollStrategy",
 	/**
-		If true, the scroller will not propagate dragstart events that cause it to start scrolling (defaults to true)
+		If true (the default), the scroller will overscroll and bounce back at the edges
+	*/
+	overscroll: true,
+	/**
+		If true (the default), the scroller will not propagate _dragstart_
+		events that cause it to start scrolling
 	*/
 	preventDragPropagation: true,
 	published: {
 		/**
-			Specifies how to horizontally scroll. Acceptable values are:
+			Specifies how to vertically scroll.  Acceptable values are:
 			
-			* "scroll": Always scrolls.
-			* "auto":  Scroll only if the content overflows the scroller.
+			* "scroll": Always scroll.
+			* "auto": Scroll only if the content overflows the scroller.
 			* "hidden": Never scroll.
-			* "default": In touch environments, the default vertical scrolling behavior is to always scroll. If the content does not
-			overflow the scroller, the scroller will overscroll and snap back.
+			* "default": In touch environments, the default vertical scrolling
+				behavior is to always scroll. If the content does not overflow
+				the scroller, the scroller will overscroll and snap back.
 		*/
 		vertical: "default",
 		/**
-			Specifies how to vertically scroll. Acceptable values are:
+			Specifies how to horizontally scroll.  Acceptable values are:
 
-			* "scroll": Always scrolls.
+			* "scroll": Always scroll.
 			* "auto":  Scroll only if the content overflows the scroller.
 			* "hidden": Never scroll.
-			* "default": Same as auto.
+			* "default": Same as "auto".
 		*/
 		horizontal: "default",
-		//* set to true to display a scroll thumb
+		//* Set to true to display a scroll thumb
 		thumb: true,
-		//* set to true to display a transparent overlay while scrolling; can help improve performance of complex, large scroll regions
-		//* on some platforms, notably Android.
+		/**
+			Set to true to display a transparent overlay while scrolling. This
+			can help improve performance of complex, large scroll regions on
+			some platforms (e.g., Android).
+		*/
 		scrim: false
 	},
 	events: {
@@ -62,6 +73,13 @@ enyo.kind({
 	],
 	create: function() {
 		this.inherited(arguments);
+		this.transform = enyo.dom.canTransform();
+		if(!this.transform) {
+			if(this.overscroll) {
+				//so we can adjust top/left if browser can't handle translations
+				this.$.client.applyStyle("position", "relative");
+			}
+		}
 		this.accel = enyo.dom.canAccelerate();
 		var containerClasses = "enyo-touch-strategy-container";
 		// note: needed for ios to avoid incorrect clipping of thumb
@@ -110,11 +128,13 @@ enyo.kind({
 			this.$.scrim.render();
 		}
 	},
+	//* Whether or not the scroller is actively moving
 	isScrolling: function() {
 		return this.$.scrollMath.isScrolling();
 	},
+	//* Whether or not the scroller is in overscrolling
 	isOverscrolling: function() {
-		return this.$.scrollMath.isInOverScroll();
+		return (this.overscroll) ? this.$.scrollMath.isInOverScroll() : false;
 	},
 	domScroll: function() {
 		if (!this.isScrolling()) {
@@ -149,6 +169,7 @@ enyo.kind({
 	stabilize: function() {
 		this.$.scrollMath.stabilize();
 	},
+	//* Scrolls to specific x/y positions within the scroll area.
 	scrollTo: function(inX, inY) {
 		this.stop();
 		this.$.scrollMath.scrollTo(inY || inY === 0 ? inY : null, inX);
@@ -157,17 +178,21 @@ enyo.kind({
 		this.stop();
 		this.inherited(arguments);
 	},
+	//* Sets the left scroll position within the scroller.
 	setScrollLeft: function() {
 		this.stop();
 		this.inherited(arguments);
 	},
+	//* Sets the top scroll position within the scroller.
 	setScrollTop: function() {
 		this.stop();
 		this.inherited(arguments);
 	},
+	//* Gets the left scroll position within the scroller.
 	getScrollLeft: function() {
 		return this.isScrolling() ? this.scrollLeft : this.inherited(arguments);
 	},
+	//* Gets the top scroll position within the scroller.
 	getScrollTop: function() {
 		return this.isScrolling() ? this.scrollTop : this.inherited(arguments);
 	},
@@ -220,7 +245,7 @@ enyo.kind({
 	},
 	move: function(inSender, inEvent) {
 	},
-	// special synthetic DOM events served up by the Gesture system
+	// Special synthetic DOM events served up by the Gesture system
 	dragstart: function(inSender, inEvent) {
 		// note: allow drags to propagate to parent scrollers via data returned in the shouldDrag event.
 		this.doShouldDrag(inEvent);
@@ -271,7 +296,13 @@ enyo.kind({
 		}
 	},
 	scrollMathScroll: function(inSender) {
-		this.effectScroll(-inSender.x, -inSender.y);
+		if(!this.overscroll) {
+			//don't overscroll past edges
+			this.effectScroll(-Math.min(inSender.leftBoundary, Math.max(inSender.rightBoundary, inSender.x)),
+					-Math.min(inSender.topBoundary, Math.max(inSender.bottomBoundary, inSender.y)));
+		} else {
+			this.effectScroll(-inSender.x, -inSender.y);
+		}
 		if (this.thumb) {
 			this.updateThumbs();
 		}
@@ -304,15 +335,21 @@ enyo.kind({
 	},
 	effectOverscroll: function(inX, inY) {
 		var n = this.scrollNode;
-		var x = "0,", y = "0", z = this.accel ? ",0" : "";
+		var x = "0", y = "0", z = this.accel ? ",0" : "";
 		if (inY !== null && Math.abs(inY - n.scrollTop) > 1) {
-			y = (n.scrollTop - inY) + "px";
+			y = (n.scrollTop - inY);
 		}
 		if (inX !== null && Math.abs(inX - n.scrollLeft) > 1) {
-			x = (n.scrollLeft - inX) + "px,";
+			x = (n.scrollLeft - inX);
 		}
-		enyo.dom.transformValue(this.$.client, this.translation, x + y + z);
+		if(!this.transform) {
+			//adjust top/left if browser can't handle translations
+			this.$.client.setBounds({left:x + "px", top:y + "px"});
+		} else {
+			enyo.dom.transformValue(this.$.client, this.translation, x + "px, " + y + "px" + z);
+		}
 	},
+	//* Returns the values of _overleft_ and _overtop_, if any.
 	getOverScrollBounds: function() {
 		var m = this.$.scrollMath;
 		return {
@@ -329,11 +366,12 @@ enyo.kind({
 		this.stop();
 		return this.inherited(arguments);
 	},
-	// thumb processing
+	// Thumb processing
 	alertThumbs: function() {
 		this.showThumbs();
 		this.delayHideThumbs(500);
 	},
+	//* Syncs the vertical and horizontal scroll indicators.
 	syncThumbs: function() {
 		this.$.vthumb.sync(this);
 		this.$.hthumb.sync(this);
@@ -342,15 +380,18 @@ enyo.kind({
 		this.$.vthumb.update(this);
 		this.$.hthumb.update(this);
 	},
+	//* Syncs and shows both the vertical and horizontal scroll indicators.
 	showThumbs: function() {
 		this.syncThumbs();
 		this.$.vthumb.show();
 		this.$.hthumb.show();
 	},
+	//* Hides the vertical and horizontal scroll indicators.
 	hideThumbs: function() {
 		this.$.vthumb.hide();
 		this.$.hthumb.hide();
 	},
+	//* Hides the vertical and horizontal scroll indicators asynchronously.
 	delayHideThumbs: function(inDelay) {
 		this.$.vthumb.delayHide(inDelay);
 		this.$.hthumb.delayHide(inDelay);

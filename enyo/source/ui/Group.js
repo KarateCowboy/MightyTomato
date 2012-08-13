@@ -1,12 +1,15 @@
 /**
-	Provides a wrapper around multiple elements. Enables creation of radio groups from arbitrary components supporting the [GroupItem](#enyo.GroupItem) api.
+	_enyo.Group_ provides a wrapper around multiple elements.  It enables the
+	creation of radio groups from arbitrary components supporting the
+	[GroupItem](#enyo.GroupItem) API.
 */
 enyo.kind({
 	name: "enyo.Group",
 	published: {
-		//* Can there be only one?
+		/** Can there be only one? If true, allows only one GroupItem in the
+			component list to be active. */
 		highlander: true,
-		//* The control that is selected
+		//* The control that was last selected
 		active: null
 	},
 	//* @protected

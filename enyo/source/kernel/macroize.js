@@ -1,4 +1,4 @@
-﻿//* @public
+//* @public
 
 /**
 	Populates a string template with data values.
@@ -13,7 +13,7 @@
 
 	Example:
 
-		// returns "My name is Barney."
+		// Returns "My name is Barney."
 		enyo.macroize("My name is {$name}.", {name: "Barney"});
 
 	Dot notation is supported, like so:
@@ -24,7 +24,7 @@
 				weight: 3
 			}
 		}
-		// returns "Each Gizmo weighs 3 pounds."
+		// Returns "Each Gizmo weighs 3 pounds."
 		enyo.macroize("Each {$product_0.name} weighs {$product_0.weight} pounds.", info);
 */
 enyo.macroize = function(inText, inMap, inPattern) {
@@ -49,6 +49,11 @@ enyo.macroize = function(inText, inMap, inPattern) {
 	return result;
 };
 
+/**
+	Similar to _enyo.macroize_, but performs only one iteration of the _replace_
+	call. This means that recursive expansion of macros isn't possible, but it
+	avoids the extra processing needed to find recursive use.
+*/
 enyo.quickMacroize = function(inText, inMap, inPattern) {
 	var v, working, result = inText, pattern = inPattern || enyo.macroize.pattern;
 	var fn = function(macro, name) {
@@ -65,5 +70,5 @@ enyo.quickMacroize = function(inText, inMap, inPattern) {
 
 //* @protected
 
-// matches macros of form {$name}
+// Matches macros of the form {$name}.
 enyo.macroize.pattern = /\{\$([^{}]*)\}/g;

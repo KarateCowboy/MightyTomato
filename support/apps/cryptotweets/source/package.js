@@ -1,4 +1,5 @@
 ﻿enyo.depends(
+	"$lib/layout/fittable",
 	"$lib/onyx",
 	"app.css",
 	"utils.js",
@@ -6,5 +7,6 @@
 	"Cell.js",
 	"Distribution.js",
 	"Cryptogram.js",
+	"PickLetter.js",
 	"App.js"
 );

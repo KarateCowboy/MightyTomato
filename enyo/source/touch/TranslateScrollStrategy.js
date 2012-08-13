@@ -1,8 +1,10 @@
-﻿/**
-enyo.TranslateScrollStrategy is a helper kind that extends <a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a> 
-to be optimized for scrolling environments in which effecting scroll changes with transform is fastest.
+/**
+_enyo.TranslateScrollStrategy_ is a helper kind that extends
+<a href="#enyo.TouchScrollStrategy">enyo.TouchScrollStrategy</a>, optimizing it
+for scrolling environments in which effecting scroll changes with transform is
+fastest.
 
-enyo.TranslateScrollStrategy is not typically created in application code.
+_enyo.TranslateScrollStrategy_ is not typically created in application code.
 */
 enyo.kind({
 	name: "enyo.TranslateScrollStrategy",
@@ -14,7 +16,7 @@ enyo.kind({
 	],
 	//* Set to true to optimize the strategy to only use translation to scroll; this increases fluidity of
 	//* scrolling animation. It should not be used when the scroller contains controls that require keyboard
-	//* input. This is because when translateOptimized, it is possible to position inputs such that 
+	//* input. This is because when _translateOptimized_ is true, it is possible to position inputs such that 
 	//* they will not become visibile when focused.
 	translateOptimized: false,
 	getScrollSize: function() {
@@ -46,6 +48,7 @@ enyo.kind({
 			this.inherited(arguments);
 		}
 	},
+	//* Sets the left scroll position within the scroller.
 	setScrollLeft: function(inLeft) {
 		this.stop();
 		if (this.translateOptimized) {
@@ -56,6 +59,7 @@ enyo.kind({
 			this.inherited(arguments);
 		}
 	},
+	//* Sets the top scroll position within the scroller.
 	setScrollTop: function(inTop) {
 		this.stop();
 		if (this.translateOptimized) {
@@ -66,9 +70,11 @@ enyo.kind({
 			this.inherited(arguments);
 		}
 	},
+	//* Gets the left scroll position within the scroller.
 	getScrollLeft: function() {
 		return this.translateOptimized ? this.scrollLeft: this.inherited(arguments);
 	},
+	//* Gets the top scroll position within the scroller.
 	getScrollTop: function() {
 		return this.translateOptimized ? this.scrollTop : this.inherited(arguments);
 	},
@@ -83,8 +89,13 @@ enyo.kind({
 		}
 	},
 	scrollMathScroll: function(inSender) {
-		this.scrollLeft = -inSender.x;
-		this.scrollTop = -inSender.y;
+		if(!this.overscroll) { //don't overscroll past edges
+			this.scrollLeft = -Math.min(inSender.leftBoundary, Math.max(inSender.rightBoundary, inSender.x));
+			this.scrollTop = -Math.min(inSender.topBoundary, Math.max(inSender.bottomBoundary, inSender.y));
+		} else {
+			this.scrollLeft = -inSender.x;
+			this.scrollTop = -inSender.y;
+		}
 		if (this.isScrolling()) {
 			if (this.$.scrollMath.isScrolling()) {
 				this.effectScroll(this.startX - this.scrollLeft, this.startY - this.scrollTop);
@@ -94,12 +105,12 @@ enyo.kind({
 			}
 		}
 	},
-	// while moving, scroller uses translate
+	// While moving, scroller uses translate.
 	effectScroll: function(inX, inY) {
 		var o = inX + "px, " + inY + "px" + (this.accel ? ",0" : "");
 		enyo.dom.transformValue(this.$.client, this.translation, o);
 	},
-	// when stopped, we use scrollLeft/Top (makes cursor positioning automagic)
+	// When stopped, we use scrollLeft/Top (makes cursor positioning automagic).
 	effectScrollStop: function() {
 		if (!this.translateOptimized) {
 			var t = "0,0" + (this.accel ? ",0" : "");
@@ -123,6 +134,13 @@ enyo.kind({
 			if (needsBoundsFix) {
 				enyo.dom.transformValue(this.$.client, this.translation, t);
 			}
+		}
+	},
+	// FIXME: we can fix scrolling artifacts BUGS on Android 4.04 with this heinous incantation.
+	twiddle: function() {
+		if (this.translateOptimized) {
+			this.scrollNode.scrollTop = 1;
+			this.scrollNode.scrollTop = 0;
 		}
 	},
 	down: enyo.nop

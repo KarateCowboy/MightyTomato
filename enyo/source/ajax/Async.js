@@ -1,16 +1,21 @@
 ﻿/**
-	Base kind for handling asynchronous operations.  To use, you create a new
-	instance of enyo.Async or a kind derived from it, then register response
-	and error handlers, then start the async operation running with the `go`
-	method.
+	_enyo.Async_ is the base kind for handling asynchronous operations.
+	
+	_enyo.Async_ is an **Object**, not a **Component**; thus, you may not declare
+	an _Async_ in a _components_ block. If you want to use _Async_ as a
+	component, you should probably be using
+	<a href="#enyo.WebService">enyo.WebService</a> instead.
+	
+	An Async object represents a task that has not yet completed. You may attach
+	callback functions to an Async, to be called when the task completes or
+	encounters an error.
+	
+	More information on _Async_ and its usage is available in the
+	<a href="https://github.com/enyojs/enyo/wiki/Async">Async documentation</a>
+	in the Enyo Developer Guide.
+	
 
-	Handlers can either me methods with the signature (asyncObject, value) or
-	new instances of enyo.Async or its subkinds.  This allows chaining of
-	async objects, such as calling a web API
 
-	The base implementation isn't actually sync.  Calling go causes all the
-	response handlers to be called.  However, its useful for chaining multiple
-	enyo.Asnyc-subkinds together.
 */
 enyo.kind({
 	name: "enyo.Async",
@@ -27,16 +32,20 @@ enyo.kind({
 		inArray.push(fn);
 	},
 	//* @public
-	/** register a response function, first parameter is
-		an optional this context for the response method, second
-		(or only) parameter is the function object. */
+	/**
+		Registers a response function.
+		First parameter is an optional this context for the response method.
+		Second (or only) parameter is the function object. 
+	*/
 	response: function(/* [inContext], inResponder */) {
 		this.accumulate(this.responders, arguments);
 		return this;
 	},
-	/** register an error handler, first parameter is
-		an optional this context for the response method, second
-		(or only) parameter is the function object. */
+	/**
+		Registers an error handler.
+		First parameter is an optional this context for the response method.
+		Second (or only) parameter is the function object. 
+	*/
 	error: function(/* [inContext], inResponder */) {
 		this.accumulate(this.errorHandlers, arguments);
 		return this;
@@ -59,7 +68,11 @@ enyo.kind({
 			if (r instanceof enyo.Async) {
 				this.route(r, inValue);
 			} else {
+				// handler can return a new 'value'
 				var v = enyo.call(this.context || this, r, [this, inValue]);
+				// ... but only if it returns something other than undefined
+				v = (v !== undefined) ? v : inValue;
+				// next handler
 				(this.failed ? this.fail : this.respond).call(this, v);
 			}
 		}
@@ -82,26 +95,30 @@ enyo.kind({
 		this.timedout = true;
 		this.fail("timeout");
 	},
-	//* @public
-	//* called from async handler, indicates successful completion
+	//* @protected
+	//* Called as part of the async implementation, triggers the handler chain.
 	respond: function(inValue) {
 		this.failed = false;
 		this.endTimer();
 		this.handle(inValue, this.responders);
 	},
-	//* called from async handler, indicates error
+	//* @public
+	//* Can be called from any handler to trigger the error chain.
 	fail: function(inError) {
 		this.failed = true;
 		this.endTimer();
 		this.handle(inError, this.errorHandlers);
 	},
-	//* clear error condition to allow retrying
+	//* Called from an error handler, this method clears the error
+	// condition and resumes calling handler methods.
 	recover: function() {
 		this.failed = false;
 	},
-	//* start the async activity, overridden in subkinds
+	//* Starts the async activity. Overridden in subkinds.
 	go: function(inValue) {
-		this.respond(inValue);
+		enyo.asyncMethod(this, function() {
+			this.respond(inValue);
+		});
 		return this;
 	}
 });

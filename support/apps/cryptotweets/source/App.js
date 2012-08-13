@@ -24,86 +24,75 @@
  */
 
 enyo.kind({
-	name: "PickLetterPopup",
-	kind: "onyx.Popup",
+	name: "FetchPopup",
+	kind: onyx.Popup,
+	autoDismiss: false,
 	centered: true,
 	modal: true,
 	floating: true,
-	style: "padding: 10px; font-size: 30px;",
-	handlers: {
-		onkeypress: "keypress"
+	scrim: true,
+	style: "padding: 10px; background: #444F70;",
+	events: {
+		onFetchTweets: "", 
+		onFetchNews: ""
 	},
-	show: function(cypherLetter) {
-		this.cypherLetter = cypherLetter;
-		this.setContent(this.cypherLetter + " " + Unicode.rightwardArrow + " ?");
-		this.inherited(arguments);
+	components: [
+		{ content: "Choose Game Type", 
+			style: "text-align: center; margin-bottom: 10px;" },
+		{ kind: onyx.Button, style: "margin-right: 10px", content: "Twitter",
+			ontap: "handleFetchTweets" },
+		{ kind: onyx.Button, content: "USA Today", ontap: "handleFetchNews" }
+	],
+	handleFetchTweets: function() {
+		this.doFetchTweets();
+		this.hide();
 	},
-	keypress: function(inSender, inEvent) {
-		var key = String.fromCharCode(inEvent.charCode).toUpperCase();
-		// allow backspace or space to clear a cell
-		if (inEvent.charCode === 8 || inEvent.charCode === 32) {
-			this.setContent(this.cypherLetter + " " + Unicode.rightwardArrow +
-				" " + Unicode.nbsp);
-			setTimeout(enyo.bind(this, this.hide), 1000);
-			this.bubble("onFinishGuess", {
-				cypher: this.cypherLetter,
-				guess: null
-			});
-			return true;
-		}
-
-		if (key >= "A" && key <= "Z") {
-			this.setContent(this.cypherLetter + " " + Unicode.rightwardArrow +
-				" " + key);
-			setTimeout(enyo.bind(this, this.hide), 1000);
-			this.bubble("onFinishGuess", {
-				cypher: this.cypherLetter,
-				guess: key
-			});
-			return true;
-		}
+	handleFetchNews: function() {
+		this.doFetchNews();
+		this.hide();
 	}
 });
 
 enyo.kind({
 	name: "App",
-	kind: "Control",
+	kind: enyo.FittableRows,
 	classes: "onyx",
 	handlers: {
 		onStartGuess: "startGuess",
 		onFinishGuess: "finishGuess"
 	},
 	components: [
-		{ kind: "enyo.Signals",
+		{ kind: enyo.Signals,
 			onkeypress: "handleKeyPress",
 			onkeydown: "handleKeyDown" },
-		{ kind: "onyx.Toolbar", components: [
-			//{kind: onyx.Grabber},
-			{content: "CryptoTweets", style: "padding-right: 30px"},
-			{kind: enyo.Group, highlander: false, components: [
-				{kind: onyx.Button, content: "Hint", onclick: "giveHint"},
-				{kind: onyx.Button, content: "Reset", onclick: "restart"},
-				{kind: onyx.Button, content: "Next", onclick: "nextTweet"}
-			]},
-			{kind: enyo.Group, highlander: false, components: [
-				{kind: onyx.Button, content: "Fetch Tweets", onclick: "fetchTweets"},
-				{kind: onyx.Button, content: "Fetch News", onclick: "fetchNews"}
-			]}
+		{ kind: onyx.MoreToolbar, style: "background: #444F70;", 
+			movedClass: "toolbar-fixed-width",
+			components: [
+				{ content: "CryptoTweets", style: "padding-right: 10px" },
+				{ kind: enyo.Group, highlander: false, components: [
+					{kind: onyx.Button, content: "Hint", onclick: "giveHint"},
+					{kind: onyx.Button, content: "Reset", onclick: "restart"},
+					{kind: onyx.Button, content: "Next", onclick: "nextTweet"}
+				]}
 		]},
-		{ kind: "Cryptogram" },
-		{ name: "popup", kind: "PickLetterPopup" }
+		// these all use the automatic name feature since they're unique kinds
+		{ kind: enyo.Scroller, fit: true, components: [
+			{ kind: Cryptogram }
+		]},
+		{ kind: FetchPopup, onFetchTweets: "fetchTweets", onFetchNews: "fetchNews"},
+		{ kind: PickLetterPopup }
 	],
 	create: function() {
 		this.inherited(arguments);
-
-		this.tweets = [
-			"Tweets are being loaded!",
-			"This is a very long message used to test how well we're able to word-wrap very long messages."
-		];
+		this.tweets = [];
 		this.nextTweetIndex = 0;
-		//this.nextTweet();
 	},
-	fetchTweets: function() {
+	rendered: function() {
+		this.inherited(arguments);
+		// show selection popup
+		this.$.fetchPopup.show();
+	},
+	fetchTweets: function(inSender) {
 		var request = new enyo.JsonpRequest({
 			url: "http://search.twitter.com/search.json",
 			callbackName: "callback"
@@ -113,7 +102,7 @@ enyo.kind({
 			q: "from:TopTweets -filter:links"
 		});
 	},
-	fetchNews: function() {
+	fetchNews: function(inSender) {
 		var request = new enyo.JsonpRequest({
 			url: "http://api.usatoday.com/open/articles/topnews",
 			callbackName: "jsoncallbackmethod"
@@ -168,7 +157,9 @@ enyo.kind({
 		}
 	},
 	startGuess: function(inSender, inEvent) {
-		this.$.popup.show(inEvent.cypher);
+		// clear hover before showing popup
+		this.waterfallDown("onHoverCell", { cypher: null });
+		this.$.pickLetterPopup.show(inEvent.cypher);
 		return true;
 	},
 	finishGuess: function(inSender, inEvent) {

@@ -1,4 +1,4 @@
-﻿//* @protected
+//* @protected
 enyo.kind({
 	name: "enyo._DragAvatar",
 	style: "position: absolute; z-index: 10; pointer-events: none; cursor: move;",
@@ -11,7 +11,28 @@ enyo.kind({
 
 //* @public
 /**
-	DragAvatar creates a control to follow the pointer when dragging.
+	_enyo.DragAvatar_ creates a control to follow the pointer when dragging. It
+	automatically displays the avatar control when the user drags, and updates
+	its position relative to the current pointer location.
+
+		enyo.kind({
+			name: "App",
+			handlers: {
+				ondrag: "drag",
+				ondragfinish: "dragFinish",
+			},
+			components: [
+				{name:"dragAvatar", kind:"DragAvatar",
+					components: [{tag: "img", src: "images/icon.png"}]
+				}
+			],
+			drag: function(inSender, inEvent) {
+				this.$.dragAvatar.drag(inEvent);
+			},
+			dragFinish: function(inSender, inEvent) {
+				this.$.dragAvatar.hide();
+			}			
+		});
 */
 enyo.kind({
 	name: "enyo.DragAvatar",

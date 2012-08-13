@@ -1,50 +1,16 @@
-﻿/**
-_enyo.Object_ implements the property publishing system.
-Published properties are declared by providing a _published_ property within a call to
-_enyo.kind_. Getter and setter methods are automatically generated for
-properties declared this way. Also, setters for published properties
-trigger _&lt;propertyName&gt;Changed_ methods by convention.
+/**
+_enyo.Object_ implements the Enyo framework's property publishing system, as
+well as providing several utility functions for its subkinds.
 
-	enyo.kind({
-		name: "MyObject",
-		kind: enyo.Object,
+Published properties are declared in a hash called _published_ within a call
+to _enyo.kind_. Getter and setter methods are automatically generated for
+properties declared in this manner. Also, by convention, the setter for a
+published property will trigger an optional _&lt;propertyName&gt;Changed_ method
+when called.
 
-		// declare 'published' properties
-		published: {
-			myValue: 3
-		},
-
-		// these methods will be automatically generated:
-		//	getMyValue: function() ...
-		//	setMyValue: function(inValue) ...
-
-		// optional method that is called whenever setMyValue is called
-		myValueChanged: function(inOldValue) {
-			this.delta = this.myValue - inOldValue;
-		}
-	});
-
-In the above example, _myValue_ becomes a regular property on the MyObject
-prototype (with a default value of 3), and the getter and setter methods are generated
-as noted in the comments.
-
-	myobj = new MyObject();
-	var x = myobj.getMyValue(); // x gets 3
-
-You may choose to declare a _changed_ method to observe set calls on a property. 
-The _myValueChanged_ method in the example above is called whenever _setMyValue_ is called.
-
-	myobj.setMyValue(7); // myValue becomes 7; myValueChanged side-effect sets delta to 4
-
-_Changed_ methods are called whenever setters are invoked, whether the actual value has changed
-or not.
-
-Published properties are stored as regular properties on the object prototype, so it's possible
-to query or set their values directly (changed methods are not called if you set a property directly).
-
-	var x = myobj.myValue;
-
-enyo.Object also provides some utility functions for its subkinds.
+For more information, see the [documentation on Published
+Properties](https://github.com/enyojs/enyo/wiki/Published-Properties) in the
+Enyo Developer Guide.
 */
 enyo.kind({
 	name: "enyo.Object",
@@ -54,6 +20,12 @@ enyo.kind({
 	constructor: function() {
 		enyo._objectCount++;
 	},
+	/**
+		Sets property named 'n' with value 'v' and then invokes callback
+		function 'cf' (if specified) with the original value of property 'n'.
+		All property setting should bottleneck here so that objects can
+		observe changes wlog.
+	*/
 	setPropertyValue: function(n, v, cf) {
 		if (this[cf]) {
 			var old = this[n];
@@ -89,7 +61,9 @@ enyo.kind({
 		}
 	},
 	/**
-		Sends a log message to the console, prepended with the name of the kind and method from which log was invoked. Multiple arguments are coerced to String and joined with spaces.
+		Sends a log message to the console, prepended with the name of the kind
+		and method from which _log_ was invoked.  Multiple arguments are coerced
+		to String and joined with spaces.
 
 			enyo.kind({
 				name: "MyObject",

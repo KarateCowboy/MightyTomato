@@ -7,7 +7,10 @@ enyo.kind({
 		top: "",
 		bottom: "",
 		mutable: true,
-		isLetter: false
+		encrypted: false
+	},
+	events: {
+		onHoverCell: ""
 	},
 	components: [
 		{ name: "top", classes: "top" },
@@ -19,36 +22,42 @@ enyo.kind({
 		onResetGuess: "reset",
 		onmouseover: "hoverStart",
 		onmouseout: "hoverEnd",
-		onHoverCell: "hoverCell"
+		onUpdateHoverState: "updateHoverState"
 	},
 	create: function () {
 		this.inherited(arguments);
-		this.addRemoveClass("letter", this.isLetter);
-		this.originalGuess = this.top;
+		this.encryptedChanged();
 		this.topChanged();
 		this.mutableChanged();
 		this.bottomChanged();
 	},
 	reset: function () {
 		// go back to "unguessed" state
-		if (this.isLetter) {
+		if (this.encrypted) {
 			this.setMutable(true);
+			this.setTop("");
 		}
-		this.setTop(this.originalGuess);
+	},
+	updateMiddle: function() {
+		if (this.encrypted && this.mutable) {
+			this.$.middle.setContent(Unicode.mdash);
+		}
+		else {
+			this.$.middle.setContent(Unicode.nbsp);
+		}
+	},
+	encryptedChanged: function() {
+		this.addRemoveClass("letter", this.encrypted);
+		this.updateMiddle();
+	},
+	mutableChanged: function() {
+		this.updateMiddle();
 	},
 	topChanged: function() {
 		this.$.top.setContent(this.top || Unicode.nbsp);
 	},
 	bottomChanged: function() {
 		this.$.bottom.setContent(this.bottom || Unicode.nbsp);
-	},
-	mutableChanged: function() {
-		if (this.isLetter && this.mutable) {
-			this.$.middle.setContent(Unicode.mdash);
-		}
-		else {
-			this.$.middle.setContent(Unicode.nbsp);
-		}
 	},
 	guess: function(inSender, inEvent) {
 		if (this.mutable) {
@@ -70,15 +79,19 @@ enyo.kind({
 			this.bubble("onStartGuess", { cypher: this.bottom });
 		}
 	},
+	// notify owner about mouse enter/leaves
 	hoverStart: function() {
-		if (this.mutable) {
-			this.parent.waterfallDown("onHoverCell", { cypher: this.bottom });
+		if (this.encrypted && this.mutable) {
+			this.doHoverCell({ cypher: this.bottom });
 		}
 	},
 	hoverEnd: function() {
-		this.parent.waterfallDown("onHoverCell", { cypher: null });
+		this.doHoverCell({ cypher: null });
 	},
-	hoverCell: function(inSender, inEvent) {
-		this.addRemoveClass("selectedCell", this.bottom === inEvent.cypher);
+	// handle event sent down the tree to change my visible hover state
+	updateHoverState: function(inSender, inEvent) {
+		if (this.encrypted && this.mutable) {
+			this.addRemoveClass("selectedCell", this.bottom === inEvent.cypher);
+		}
 	}
 });
