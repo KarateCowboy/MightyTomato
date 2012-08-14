@@ -2,8 +2,12 @@ enyo.kind({
   name:"MightyTomato",
   kind:enyo.VFlexBox,
   classes:"onyx",
-  session:'pomodoro',
-  tickTock:0,
+  interval: null,
+  finishSound: null,
+  constructor: function(){
+    this.finishSound = new Audio("sounds/Short_Ding.ogg");
+    this.inherited(arguments);
+  },
   components:[
     {kind:onyx.Toolbar, name:"PageHeader", style:"background-color: #0511F8", components:[
       {content:"Mighty Tomato", name:"Marquee"},
@@ -13,10 +17,9 @@ enyo.kind({
       {flex:1, kind:"Scroller", name:"Scroller", components:[
         {kind:"MainButton", name:"MainButton", classes:'main-button', ontap:"mainButtonPress"},
         {kind: "Timer",name: "timer"},
-        {kind:onyx.Input, name:"TaskText", classes:'task-text onyx-input-decorator', placeholder:"Some important task..."},
         {kind:onyx.Button, name:"TimerButton", showing:false, classes:'timer-button', content:"25:00", ontap:"timerButtonPress"},
-        {kind:onyx.Popup, modal: true, floating: true, centered: true, name: "CancelConfirmation" },
-        {kind:onyx.Popup, modal:true, floating:true, centered:true, name:"PreferencesModal", components:[
+        {kind: "CancelConfirmation", name:"CancelPopup", showing:false},
+        {kind:onyx.Popup, floating:true, centered:true, name:"PreferencesModal", components:[
           { content:"Preferences" },
           {tag:"br"},
           { layoutKind:enyo.HFlexLayout, pack:"center", components:[
@@ -45,110 +48,36 @@ enyo.kind({
       this.$.timer.second = 0;
       this.$.MainButton.hide();
       this.$.TimerButton.show();
-      this.$.timer.start();
+      t = this.$.timer;
+      this.interval = window.setInterval('t.countDown()',1000);
     },
 
-
-  setupTimer:function (button){
-    if ( button === this.$.MainButton ){
-      this.$.MainButton.hide();
-      this.$.TaskText.hide();
-      this.minutes = 25;
-      this.seconds = 0;
-      this.session = 'pomodoro';
-    }else if ( button === this.$.BreakButton ){
-      this.$.BreakButton.hide();
-      this.minutes = 5;
-      this.seconds = 0;
-      this.session = 'break';
-    }
-    this.$.TimerButton.setContent(this.pad(this.minutes, 2) + ":" + this.pad(this.seconds, 2));
-    this.$.TimerButton.show();
-    this.timerInterval = window.setInterval("t.decrementTimer()", 1000);
-    this.tick = new buzz.sound("sounds/tick1", { formats:[ "ogg"]});
-    this.tock = new buzz.sound("sounds/tick1", { formats:[ "ogg"]});
-    var taskName = this.$.TaskText.getValue();
-    if ( taskName.length > 0 ){
-      this.$.Marquee.setContent(taskName);
-    }else{
-      this.$.Marquee.setContent("Mighty Tomato");
-    }
-  },
-
   timerButtonPress: function(){
-    this.$.CancelConfirmation.show();
+    this.$.CancelPopup.show();
   },
 
-  /*
-  timerButtonPress:function (){
-    if ( this.timerInterval == null ){
-      this.$.TimerButton.hide();
-      this.$.TimerButton.setContent(this.pad(this.minutes, 2) + ":" + this.pad(this.seconds, 2));
-      this.$.TaskText.setValue('');
-      this.$.MainButton.show();
-      this.$.TaskText.show();
-      this.minutes = 25;
-      this.seconds = 0;
-      this.$.Marquee.setValue("Mighty Tomato");
-    }else{
-      this.timerInterval = window.clearInterval(this.timerInterval);
-    }
-  },
-  */
+  handlers: {
+    doCountDown: "handleCountDown",
+    doFinish: "handleFinish",
+    doAffirmCancel:"handleAffirmCancel"
+  } ,
 
-  decrementTimer:function (){
-    if ( this.seconds == 0 ){
-      this.minutes = this.minutes - 1;
-      this.seconds = 59;
-    }else{
-      this.seconds = this.seconds - 1;
-    }
-    if ( this.minutes < 0 ){
-      this.finishRun();
-    }else{
-      if ( this.$.tickOn.getActive() ){
-        if ( this.tickTock == 0 ){
-          this.tick.setVolume(100);
-          this.tick.play();
-          this.tickTock = 1;
-        }else{
-          this.tock.setVolume(100);
-          this.tock.play();
-          this.tickTock = 0;
-        }
-      }
-    }
-
-    var mins = this.pad(this.minutes, 2);
-    var secs = this.pad(this.seconds, 2);
-    this.$.TimerButton.setContent(mins + ":" + secs);
+  handleCountDown: function(inEvent,inSender){
+    var snd = new Audio("sounds/tick1.ogg");
+    snd.play();
+    this.$.TimerButton.setContent(this.$.timer.currentTime());
   },
 
-  finishRun:function (){
-    window.clearInterval(this.timerInterval);
-    this.minutes = 0;
-    this.seconds = 0;
-    if ( this.$.longSongRadio.getActive() ){
-      var mySound = new buzz.sound("sounds/tada", {
-        formats:[ "ogg"]
-      });
-      mySound.setVolume(100);
-      mySound.play();
-    }else if ( this.$.shortDing.getActive() ){
-      var mySound = new buzz.sound("sounds/Short_Ding", {
-        formats:[ "ogg"]
-      });
-      mySound.setVolume(80);
-      mySound.play();
-    }
+  handleFinish: function(){
+    window.clearInterval(this.interval);
+    this.finishSound.play();
+  },
+  handleAffirmCancel: function(){
+    window.clearInterval(this.interval);
     this.$.TimerButton.hide();
-    if ( this.session.match(/pomodoro/) ){
-      this.$.BreakButton.show();
-    }else if ( this.session.match(/break/) ){
-      this.$.MainButton.show();
-      this.$.TaskText.show();
-    }
-  },
+    this.$.MainButton.show();
+  } ,
+
 
   showPreferencesModal:function (){
     this.$.PreferencesModal.show();

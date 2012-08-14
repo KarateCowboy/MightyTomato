@@ -13,19 +13,16 @@ enyo.kind({
     second:0,
     interval:null,
 
-    start: function(){
-      this.interval = window.setInterval("this.countDown",1000);
+    start: function(inSelf){
+      //this.interval = setInterval(inSelf.countDown(),1000);
     },
     
     countDown: function(){
       if(this.second == 0){
-         this.second = 59; 
+        this.minute--;
+        this.second = 59;
       }else{
-         this.second--;    
-      }
-
-      if(this.second == 0){
-          this.minute--;
+        this.second--;
       }
 
       if(this.minute <= 0 && this.second == 0){
@@ -33,9 +30,8 @@ enyo.kind({
       }else{
         this.bubbleUp('doCountDown');
       }
-
-        
     },
+
     currentTime: function(){
       return this.pad(this.minute,2) + ":" + this.pad(this.second,2);
     },
@@ -52,5 +48,8 @@ enyo.kind({
     finishCounting: function(){
         window.clearInterval(this.interval);
         this.bubbleUp('doFinish');
+    },
+    events: {
+      onCountDown: "countDown"
     }
 });
