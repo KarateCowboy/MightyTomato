@@ -4,6 +4,7 @@ enyo.kind({
   classes:"onyx",
   interval: null,
   finishSound: null,
+  tick: null,
   constructor: function(){
     this.finishSound = new Audio("sounds/Short_Ding.ogg");
     this.inherited(arguments);
@@ -19,25 +20,10 @@ enyo.kind({
         {kind: "Timer",name: "timer"},
         {kind:onyx.Button, name:"TimerButton", showing:false, classes:'timer-button', content:"25:00", ontap:"timerButtonPress"},
         {kind: "CancelConfirmation", name:"CancelPopup", showing:false},
+        {kind: "PreferencesModal", name: "PreferencesPopup", showing:false},
         {kind:onyx.Popup, floating:true, centered:true, name:"PreferencesModal", components:[
-          { content:"Preferences" },
-          {tag:"br"},
-          { layoutKind:enyo.HFlexLayout, pack:"center", components:[
-            {content:"Alarm Sound"},
-            {kind:onyx.RadioGroup, name:"AlarmSetting", components:[
-              {name:"longSongRadio", content:"Victory Fanfare"},
-              {name:"shortDing", content:"Short Ding", active:true},
-              {content:"None"}
-            ]},
-            {tag:"br"},
-            {classes:"divider", content:"Ticking Sound"},
-            {kind:"Group", classes:"tools group", defaultKind:"onyx.Button", highlander:true, components:[
-              {content:"On", name:"tickOn", active:true, classes:"onyx-affirmative"},
-              {content:"Off", name:"tickOff", classes:"onyx-negative"}
-            ]}
-          ]}
-        ]},
-        {kind:onyx.Button, name:"BreakButton", classes:"break-button", ontap:"setupTimer", center:true, content:"Break", showing:false}
+
+        ]}
       ]}
     ]}
   ],
@@ -63,14 +49,24 @@ enyo.kind({
   } ,
 
   handleCountDown: function(inEvent,inSender){
-    var snd = new Audio("sounds/tick1.ogg");
-    snd.play();
+    if(this.$.PreferencesPopup.$.tickOn.active){
+      var snd = new Audio("sounds/tick1.ogg");
+      snd.play();
+    }
     this.$.TimerButton.setContent(this.$.timer.currentTime());
   },
 
   handleFinish: function(){
     window.clearInterval(this.interval);
-    this.finishSound.play();
+    if(this.$.PreferencesPopup.$.longAlarm.active){
+      this.finishSound = new Audio("sounds/Victory_Fanfare.ogg");
+      this.finishSound.play();
+    }else if(this.$.PreferencesPopup.$.longAlarm.active){
+      this.finishSound = new Audio("sounds/Short_Ding.ogg");
+      this.finishSound.play();
+    }else if(this.$.PreferencesPopup.$.noAlarm.active == false){
+
+    }
   },
   handleAffirmCancel: function(){
     window.clearInterval(this.interval);
@@ -80,7 +76,7 @@ enyo.kind({
 
 
   showPreferencesModal:function (){
-    this.$.PreferencesModal.show();
+    this.$.PreferencesPopup.show();
   },
 
   pad:function (number, length){

@@ -54,6 +54,36 @@ describe("MightyTomato", function (){
       });
   });
 
+  describe("PreferencesButton",function(){
+     it("exists and is a button",function(){
+        expect(tomato.$.PreferencesButton).toBeDefined();
+        expect(tomato.$.PreferencesButton.kind).toBe(onyx.Button);
+     });
+     it("says 'Preferences'",function(){
+        expect(tomato.$.PreferencesButton.getContent()).toBe("Preferences");
+     });
+    it("calls showPreferencesModal ontap",function(){
+       expect(tomato.$.PreferencesButton.ontap).toBe("showPreferencesModal");
+    });
+
+    describe("#showPreferencesModal",function(){
+      it("exists",function(){
+        expect(tomato.showPreferencesModal).toBeDefined();
+      });
+      it("calls 'show' on the PreferencesPopup",function(){
+         spyOn(tomato.$.PreferencesPopup,'show');
+         tomato.showPreferencesModal();
+         expect(tomato.$.PreferencesPopup.show).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe("PreferencesPopup",function(){
+     it("exists and is of type PreferencesModal",function(){
+        expect(tomato.$.PreferencesPopup).toBeDefined();
+     });
+  });
+
   describe("TimerButton",function(){
      it("exists and is an onyx.Button", function(){
        expect(tomato.$.TimerButton).toBeDefined();
@@ -75,8 +105,6 @@ describe("MightyTomato", function (){
      });
 
   });
-
-
 
   //TODO write tests for handlers
   describe("handler methods",function(){
