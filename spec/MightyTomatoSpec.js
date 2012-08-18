@@ -106,7 +106,25 @@ describe("MightyTomato", function (){
 
   });
 
-  //TODO write tests for handlers
+  describe("BreakButton",function(){
+    it("exists and is an onyx Button", function(){
+      expect(tomato.$.BreakButton).toBeDefined();
+      expect(tomato.$.BreakButton.kind).toBe(onyx.Button);
+    });
+    it("is hidden to begin with",function(){
+       expect(tomato.$.BreakButton.showing).toBeFalsy();
+    });
+    it("is the same class main-button",function(){
+       expect(tomato.$.BreakButton.classes).toMatch(/main-button/);
+    });
+    it('says "Take a Break!"',function(){
+       expect(tomato.$.BreakButton.getContent()).toMatch("Take a Break!");
+    });
+    it("calls startBreak ontap",function(){
+       expect(tomato.$.BreakButton.ontap).toBe("startBreak");
+    });
+  });
+
   describe("handler methods",function(){
      describe("handleCountDown",function(){
         it("updates the TimerButton's content with the currentTime from the timer",function(){
@@ -123,10 +141,25 @@ describe("MightyTomato", function (){
          expect(window.clearInterval).toHaveBeenCalled();
        });
        it("plays a completion sound",function(){
-         spyOn(tomato.finishSound,'play');
+         spyOn(tomato.shortFinishSound,'play');
          tomato.handleFinish();
-         expect(tomato.finishSound.play).toHaveBeenCalled();
+         expect(tomato.shortFinishSound.play).toHaveBeenCalled();
        });
+      it("hides the TimerButton",function(){
+        spyOn(tomato.$.TimerButton,'hide');
+        tomato.handleFinish();
+        expect(tomato.$.TimerButton.hide).toHaveBeenCalled();
+      });
+      it("shows the BreakButton",function(){
+         spyOn(tomato.$.BreakButton,'show');
+        tomato.handleFinish();
+        expect(tomato.$.BreakButton.show).toHaveBeenCalled();
+      });
+      it("changes the timer mode to work when break",function(){
+         tomato.timerMode = 'work';
+        tomato.handleFinish();
+        expect(tomato.timerMode).toBe('break');
+      });
     });
 
     describe("handleAffirmCancel",function(){
@@ -147,10 +180,34 @@ describe("MightyTomato", function (){
       });
 
     });
+
+    describe("startBreak",function(){
+      it("hides the BreakButton",function(){
+        spyOn(tomato.$.BreakButton,'hide');
+        tomato.startBreak();
+        expect(tomato.$.BreakButton.hide).toHaveBeenCalled();
+      });
+      it("sets the timer to five minutes",function(){
+         tomato.startBreak();
+        expect(tomato.$.timer.minute).toBe(5);
+        expect(tomato.$.timer.second).toBe(0);
+      });
+      it("shows the timer button",function(){
+         spyOn(tomato.$.TimerButton,'show');
+        tomato.startBreak();
+        expect(tomato.$.TimerButton.show).toHaveBeenCalled();
+      });
+      it("sets the interval",function(){
+         spyOn(window,'setInterval');
+        tomato.startBreak();
+        expect(window.setInterval).toHaveBeenCalled();
+      });
+    });
   });
+
   describe("constructor", function(){
-    it("assigns the finishSound",function(){
-      expect(tomato.finishSound).toBeDefined();
+    it("assigns the finishing sounds",function(){
+      expect(tomato.shortFinishSound).toBeDefined();
     });
   });
 
