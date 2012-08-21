@@ -24,15 +24,13 @@ enyo.kind({
         {kind:onyx.Button, name:"TimerButton", showing: false, classes:'timer-button', content:"25:00", ontap:"timerButtonPress"},
         {kind: onyx.Button, name: "BreakButton",showing: false, classes:'main-button', content:"Take a Break!", ontap:"startBreak"},
         {kind: "CancelConfirmation", name:"CancelPopup", showing:false},
-        {kind: "PreferencesModal", name: "PreferencesPopup", showing:false},
-        {kind:onyx.Popup, floating:true, centered:true, name:"PreferencesModal", components:[
-
-        ]}
+        {kind: "PreferencesModal", name: "PreferencesPopup", showing:false}
       ]}
     ]}
   ],
 
     mainButtonPress: function(){
+      this.$.PreferencesPopup.loadPreferences();
       this.$.timer.minute = 25;
       this.$.timer.second = 0;
       this.$.MainButton.hide();
@@ -94,6 +92,7 @@ enyo.kind({
   },
 
   showPreferencesModal:function (){
+    this.$.PreferencesPopup.loadPreferences();
     this.$.PreferencesPopup.show();
   },
 
