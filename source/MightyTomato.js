@@ -8,7 +8,7 @@ enyo.kind({
   timerMode: 'work',
   tick: null,
   constructor: function(){
-    this.longFinishSound = new Audio("sounds/Victory_Fanfare.ogg");
+    this.longFinishSound = new Audio("sounds/tada.ogg");
     this.shortFinishSound = new Audio("sounds/Short_Ding.ogg");
     this.inherited(arguments);
   },
