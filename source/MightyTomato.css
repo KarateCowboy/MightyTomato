@@ -18,6 +18,10 @@ IMG.centered {
 
 }
 
+.greenback {
+  background: #00FF00;
+}
+
 .timer-button {
     display: block;
     margin-left: auto;

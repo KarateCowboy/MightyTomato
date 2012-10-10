@@ -1,6 +1,6 @@
 enyo.kind({
   name:"MightyTomato",
-  kind:enyo.VFlexBox,
+  kind:enyo.Control,
   classes:"onyx",
   interval: null,
   longFinishSound: null,
@@ -13,20 +13,13 @@ enyo.kind({
     this.inherited(arguments);
   },
   components:[
-    {kind:onyx.Toolbar, name:"PageHeader", style:"background-color: #0511F8", components:[
-      {content:"Mighty Tomato", name:"Marquee"},
-      {kind:onyx.Button, name:"PreferencesButton", classes:"enyo-button-dark", content:"Preferences", ontap:"showPreferencesModal"}//add config buttons here
-    ]},
-    {flex:1, kind:enyo.Pane, name:"Pane", classname:"mainPane", components:[
-      {flex:1, kind:"Scroller", name:"Scroller", components:[
+      {kind:onyx.Button, name:"PreferencesButton", classes:"enyo-button-dark", content:"Preferences", ontap:"showPreferencesModal"},//add config buttons here
         {kind:"MainButton", name:"MainButton", classes:'main-button', ontap: "mainButtonPress"},
         {kind: "Timer",name: "timer"},
         {kind:onyx.Button, name:"TimerButton", showing: false, classes:'timer-button', content:"25:00", ontap:"timerButtonPress"},
         {kind: onyx.Button, name: "BreakButton",showing: false, classes:'main-button', content:"Take a Break!", ontap:"startBreak"},
         {kind: "CancelConfirmation", name:"CancelPopup", showing:false},
         {kind: "PreferencesModal", name: "PreferencesPopup", showing:false}
-      ]}
-    ]}
   ],
 
     mainButtonPress: function(){
@@ -53,6 +46,16 @@ enyo.kind({
     if(this.$.PreferencesPopup.$.tickOn.active){
       var snd = new Audio("sounds/tick1.ogg");
       snd.play();
+    }
+    if(this.$.timer.minute > 10){
+      this.$.TimerButton.applyStyle('background-color','#00FF00');
+      this.applyStyle('background-color','#00FF00');
+    }else if(this.$.timer.minute > 1 && this.$.timer.minute < 10){
+      this.$.TimerButton.applyStyle('background-color','#FFFF00');
+      this.applyStyle('background-color','#FFFF00');
+    }else if(this.$.timer.minute < 1){
+      this.$.TimerButton.applyStyle('background-color','#FF0000');
+      this.applyStyle('background-color','#FF0000');
     }
     this.$.TimerButton.setContent(this.$.timer.currentTime());
   },

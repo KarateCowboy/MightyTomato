@@ -1,7 +1,7 @@
 {
-	"id": "com.mystuff.mightytomato",
+	"id": "com.redwizard.mightytomato",
 	"version": "1.0.0",
-	"vendor": "Rew Wizar Laboratories",
+	"vendor": "Rew Wizard Laboratory",
 	"type": "web",
 	"main": "index.html",
 	"title": "Mighty Tomato",

@@ -51,6 +51,7 @@ describe("MightyTomato", function (){
            tomato.mainButtonPress();
           expect(window.setInterval).toHaveBeenCalled();
         });
+
       });
   });
 
@@ -132,6 +133,12 @@ describe("MightyTomato", function (){
            tomato.$.timer.second = 18;
            tomato.handleCountDown();
           expect(tomato.$.TimerButton.getContent()).toBe("22:18");
+        });
+        it("set the color to green if the time is greater than ten minutes",function(){
+          tomato.$.timer.minute = 22;
+          tomato.$.timer.second = 18;
+          tomato.handleCountDown();
+          expect(tomato.$.MainButton.classes).toMatch(/greenback/);
         });
      });
     describe("handleFinish", function(){
