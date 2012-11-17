@@ -19,7 +19,15 @@ IMG.centered {
 }
 
 .greenback {
-  background: #00FF00;
+  background-color: #00FF00;
+}
+
+.yellowback {
+  background-color:#FFFF00;
+}
+
+.redback {
+  background-color: #FF0000 
 }
 
 .timer-button {

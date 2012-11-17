@@ -134,11 +134,17 @@ describe("MightyTomato", function (){
            tomato.handleCountDown();
           expect(tomato.$.TimerButton.getContent()).toBe("22:18");
         });
-        it("set the color to green if the time is greater than ten minutes",function(){
+        it("sets the color to green if the time is greater than ten minutes",function(){
           tomato.$.timer.minute = 22;
           tomato.$.timer.second = 18;
           tomato.handleCountDown();
-          expect(tomato.$.MainButton.classes).toMatch(/greenback/);
+          expect(tomato.hasClass('greenback')).toBe(true);
+        });
+        it("sets the color to yellow if the time is less than ten minutes",function(){
+          tomato.$.timer.minute = 7;
+          tomato.$.timer.second = 18;
+          tomato.handleCountDown();
+          expect(tomato.hasClass('yellowback')).toBe(true);
         });
      });
     describe("handleFinish", function(){

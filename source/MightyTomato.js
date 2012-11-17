@@ -48,14 +48,18 @@ enyo.kind({
       snd.play();
     }
     if(this.$.timer.minute > 10){
-      this.$.TimerButton.applyStyle('background-color','#00FF00');
-      this.applyStyle('background-color','#00FF00');
+      this.$.TimerButton.addClass('greenback');
+      this.addClass("greenback");
     }else if(this.$.timer.minute > 1 && this.$.timer.minute < 10){
-      this.$.TimerButton.applyStyle('background-color','#FFFF00');
-      this.applyStyle('background-color','#FFFF00');
+      this.$.TimerButton.removeClass('greenback');
+      this.removeClass('greenback');
+      this.$.TimerButton.addClass('yellowback');
+      this.addClass("yellowback");
     }else if(this.$.timer.minute < 1){
-      this.$.TimerButton.applyStyle('background-color','#FF0000');
-      this.applyStyle('background-color','#FF0000');
+      this.$.TimerButton.removeClass('yellowback');
+      this.removeClass('yellowback');
+      this.$.TimerButton.addClass('redback');
+      this.addClass("redback");
     }
     this.$.TimerButton.setContent(this.$.timer.currentTime());
   },
@@ -80,6 +84,9 @@ enyo.kind({
   },
   handleAffirmCancel: function(){
     window.clearInterval(this.interval);
+    this.removeClass('yellowback');
+    this.removeClass('redback');
+    this.removeClass('greenback');
     this.$.TimerButton.hide();
     this.$.MainButton.show();
   } ,
