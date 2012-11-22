@@ -32,21 +32,6 @@ describe("PreferencesModal",function(){
     });
   });
 
-  describe("Ticking sound group",function(){
-    it("exists",function(){
-       expect(modal.$.TickingOptions).toBeDefined();
-    });
-    it("has a tickOn button",function(){
-      expect(modal.$.tickOn).toBeDefined();
-      expect(modal.$.tickOn.getContent()).toBe("On");
-      expect(modal.$.tickOn.active).toBe(true);
-    });
-    it("has a tickOff button",function(){
-      expect(modal.$.tickOff).toBeDefined();
-      expect(modal.$.tickOff.getContent()).toBe("Off");
-    });
-  });
-
   describe("#savePreferences",function(){
     it("exists",function(){
       expect(modal.savePreferences).toBeDefined();

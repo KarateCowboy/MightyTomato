@@ -6,7 +6,6 @@ enyo.kind({
   longFinishSound: null,
   shortFinishSound: null,
   timerMode: 'work',
-  tick: null,
   constructor: function(){
     this.longFinishSound = new Audio("sounds/tada.ogg");
     this.shortFinishSound = new Audio("sounds/Short_Ding.ogg");
@@ -43,10 +42,6 @@ enyo.kind({
   } ,
 
   handleCountDown: function(inEvent,inSender){
-    if(this.$.PreferencesPopup.$.tickOn.active){
-      var snd = new Audio("sounds/tick1.ogg");
-      snd.play();
-    }
     if(this.$.timer.minute > 10){
       this.$.TimerButton.addClass('greenback');
       this.addClass("greenback");
