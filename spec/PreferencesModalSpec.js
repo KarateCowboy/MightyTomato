@@ -32,6 +32,16 @@ describe("PreferencesModal",function(){
     });
   });
 
+  describe("timer length group", function(){
+    it("is a group",function(){
+      expect(modal.$.timerLengthGroup).toBeDefined();
+    });
+    it("has a list button for the timer length",function(){
+      expect(modal.$.timerLength).toBeDefined();
+    });
+
+  });
+
   describe("#savePreferences",function(){
     it("exists",function(){
       expect(modal.savePreferences).toBeDefined();

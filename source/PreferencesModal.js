@@ -15,7 +15,14 @@ enyo.kind({
         {name:"shortAlarm", content:"Short Ding", active:true, ontap:"savePreferences"},
         {name: "noAlarm", content:"None", ontap:"savePreferences"}
       ]},
-      {tag:"br"}
+      {tag:"br"},
+      {kind:onyx.Group, name: "timerLengthGroup", components: [
+        {content: "Timer Length"},
+        {kind: onyx.PickerDecorator, components:[
+          {},
+          {kind: onyx.Picker, name:"timerLength" }
+        ]}
+      ]}
     ]}
   ],
   loadPreferences: function(){
@@ -28,6 +35,16 @@ enyo.kind({
         default:
           this.$.noAlarm.active = true;
       }
+    }
+  },
+  create: function(){
+    this.inherited(arguments);
+    for(var i = 1; i < 60; i++){
+      var component = {content: "" + i, name:"blah" + i} 
+      if(i == 25)
+        component.active = true;
+      this.$.timerLength.createComponent(component);
+      
     }
   },
 
