@@ -12,7 +12,7 @@ enyo.kind({
     this.inherited(arguments);
   },
   components:[
-      {kind:onyx.Button, name:"PreferencesButton", classes:"enyo-button-dark", content:"Preferences", ontap:"showPreferencesModal"},//add config buttons here
+      {kind:onyx.Button, name:"PreferencesButton", classes:"enyo-button-dark", content:"Preferences", ontap:"showPreferencesModal"},
         {kind:"MainButton", name:"MainButton", classes:'main-button', ontap: "mainButtonPress"},
         {kind: "Timer",name: "timer"},
         {kind:onyx.Button, name:"TimerButton", showing: false, classes:'timer-button', content:"25:00", ontap:"timerButtonPress"},
